@@ -14,18 +14,30 @@ cabal-version:        >=1.10
 
 library
     build-depends:    base
-                      , csv        == 0.1.1
-                      , bson       == 0.2.4
-                      , utility-ht == 0.0.8
+                      , csv                  == 0.1.1
+                      , bson                 == 0.2.4
+                      , utility-ht           == 0.0.8
+                      , hspec                == 1.9.2
     default-language: Haskell2010
     exposed-modules:  OpenBudget.Types.SpendItem
     hs-source-dirs:   src
 
+
 executable open-budget-database
     build-depends:    base
-                      , csv == 0.1.1
+                      , csv                  == 0.1.1
                       , open-budget-database
     default-language: Haskell2010
     ghc-options:      -Wall -fwarn-tabs -threaded
     hs-source-dirs:   src-exec
     main-is:          Main.hs
+
+
+test-suite test
+    hs-source-dirs:  spec
+    main-is:         Spec.hs
+    type:            exitcode-stdio-1.0
+    ghc-options:     -Wall
+    build-depends:   base
+                     , open-budget-database
+                     , hspec                 == 1.9.2
