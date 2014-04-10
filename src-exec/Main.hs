@@ -1,8 +1,8 @@
 module Main where
 
+import           Data.Maybe                 (fromJust)
 import qualified OpenBudget.Types.SpendItem as SpendItem
-import qualified Text.CSV as CSV
-import           Data.Maybe (fromJust)
+import qualified Text.CSV                   as CSV
 
 main :: IO ()
 main = do
