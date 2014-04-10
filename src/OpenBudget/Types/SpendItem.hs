@@ -4,10 +4,11 @@ module OpenBudget.Types.SpendItem where
 
 import           Data.Bson    ((=:))
 import qualified Data.Bson    as Bson (Document)
+import           Data.Char    (isDigit)
 import qualified Text.CSV     as CSV
 import qualified Text.Read.HT as HT
 
--- стаття росходів
+-- | Стаття росходів
 data SpendItem = SpendItem
 
     -- рік
@@ -38,34 +39,38 @@ data SpendItem = SpendItem
     } deriving (Show, Read)
 
 
--- розбирання статті розходу за складовими частинами
--- (порядок полів визначений у законодавчих актах)
-fromCSV :: CSV.Record -> Maybe SpendItem
+-- | Розбирання статті розходу за складовими частинами
+--   (порядок полів визначений у законодавчих актах)
+fromCSV :: CSV.Record      -- ^ результат парсингу CVS
+        -> Maybe SpendItem -- ^ можлива стаття розходів
+fromCSV (c:cn:gft:gfw:gfu:sft:ct:cw:cu:dt:db:ce:t:[])
 
--- todo: check code (should be 6 digits)
-fromCSV (c:cn:gft:gfw:gfu:sft:ct:cw:cu:dt:db:ce:t:[]) =
-    Just SpendItem
-        { code                 = c
-        , codeName             = cn
-        , generalFundTotal     = d gft
-        , generalFundWages     = d gfw
-        , generalFundUtilities = d gfu
-        , specialFundTotal     = d sft
-        , consumptionTotal     = d ct
-        , consumptionWages     = d cw
-        , consumptionUtilities = d cu
-        , developmentTotal     = d dt
-        , developmentBudget    = d db
-        , capitalExpenditures  = d ce
-        , total                = read (f t) :: Double
-        }
-    where d i = HT.maybeRead (f i) :: Maybe Double
-          f = filter (/= ',')
+    -- код повинен складатися не менш ніж з п'яти цифр
+    | all isDigit c && length c > 5 =
+        Just SpendItem
+            { code                 = c
+            , codeName             = cn
+            , generalFundTotal     = md gft
+            , generalFundWages     = md gfw
+            , generalFundUtilities = md gfu
+            , specialFundTotal     = md sft
+            , consumptionTotal     = md ct
+            , consumptionWages     = md cw
+            , consumptionUtilities = md cu
+            , developmentTotal     = md dt
+            , developmentBudget    = md db
+            , capitalExpenditures  = md ce
+            , total                = read (removeCommas t) :: Double
+            }
+    | otherwise = Nothing
+        where md i = HT.maybeRead (removeCommas i) :: Maybe Double
+              removeCommas = filter (/= ',')
 fromCSV _ = Nothing
 
 
--- конвертування статті розходів для зберігання в mongodb
-toBSON :: SpendItem -> Bson.Document
+-- | Конвертування статті розходів для зберігання в mongodb
+toBSON :: SpendItem     -- ^ стаття розходів
+       -> Bson.Document -- ^ bson-предстaвлення статті
 toBSON s =
     [ "code"                 =: code s
     , "codeName"             =: codeName s
