@@ -15,15 +15,14 @@ cabal-version:        >=1.10
 
 library
     build-depends:    base
-                      , bson                 == 0.2.4
                       , csv                  == 0.1.1
                       , hspec                == 1.9.2
                       , text
                       , utility-ht           == 0.0.8
-                      , uuid == 1.3.3
     default-language: Haskell2010
     exposed-modules:  OpenBudget.Types.SpendItem
                       OpenBudget.Types.Area
+                      OpenBudget.Types.Document
     hs-source-dirs:   src
 
 
@@ -43,6 +42,6 @@ test-suite test
     type:             exitcode-stdio-1.0
     ghc-options:      -Wall -fhpc -hpcdir dist/hpc/open-budget-database-0.0.1.0
     build-depends:    base
-                      , open-budget-database
-                      , hspec                 == 1.9.2
                       , csv                  == 0.1.1
+                      , hspec                 == 1.9.2
+                      , open-budget-database
