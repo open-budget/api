@@ -11,10 +11,11 @@ import           Data.UUID.V4
 import qualified Text.CSV     as CSV
 import qualified Text.Read.HT as HT
 
--- | Стаття росходів
+
+-- | Стаття витрат
 data SpendItem = SpendItem
 
-    { spendItemId          :: UUID         -- унікальний ідентифікатор статті розходів
+    { spendItemId          :: UUID         -- унікальний ідентифікатор статті витрат
 
     , spendItemAreaId      :: Int          -- внутрішній код регіону (0 - Україна, 1-24 - областi)
     , spendItemDocumentId  :: Text         -- посилання на id документу
@@ -44,10 +45,10 @@ data SpendItem = SpendItem
     } deriving (Show, Read, Eq)
 
 
--- | Розбирання статті розходу за складовими частинами
---   (порядок полів визначений у законодавчих актах)
-fromCSV :: CSV.Record      -- ^ результат парсингу CVS
-        -> IO (Maybe SpendItem) -- ^ можлива стаття розходів
+-- | Розбирання статті витрат за складовими частинами
+--   (порядок полей визначений у законодавчих актах)
+fromCSV :: CSV.Record           -- ^ результат парсингу CVS
+        -> IO (Maybe SpendItem) -- ^ можлива стаття витрат
 fromCSV (c:cn:gft:gfw:gfu:sft:ct:cw:cu:dt:db:ce:t:[])
 
     -- код повинен складатися не менш ніж з п'яти цифр
@@ -78,8 +79,8 @@ fromCSV (c:cn:gft:gfw:gfu:sft:ct:cw:cu:dt:db:ce:t:[])
 fromCSV _ = return Nothing
 
 
--- | Конвертування статті розходів для зберігання в mongodb
-toBSON :: SpendItem     -- ^ стаття розходів
+-- | Конвертування статті витрат для зберігання в mongodb
+toBSON :: SpendItem     -- ^ стаття витрат
        -> Bson.Document -- ^ bson-предстaвлення статті
 toBSON s =
     [ "spendItemId"          =: toString (spendItemId s)
@@ -108,7 +109,7 @@ toBSON s =
 -- toJSON
 
 
--- | Оновлення внутрішнього коду регіону у створеній статті розходів
+-- | Оновлення внутрішнього коду регіону у створеній статті витрат
 updateAreaId :: SpendItem -- ^ стаття розходів для оновлення
              -> Int       -- ^ новий код регіону
              -> SpendItem -- ^ оновлена стаття розходів
