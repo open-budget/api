@@ -1,12 +1,14 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module OpenBudget.Types.SpendItem where
+module OpenBudget.Types.Area where
 
 import           Data.Bson ((=:))
 import qualified Data.Bson as Bson (Document)
 import           Data.Char (isDigit)
 import qualified Text.CSV  as CSV
 
+
+-- | Регіон (суб'єкт) бюджетування
 data Area = Area
     { areaId   :: Int     -- внутрішній код регіону (0 - Україна, 1-24 - областi)
     , areaName :: String  -- назва регіону
