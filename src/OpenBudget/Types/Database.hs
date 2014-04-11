@@ -11,4 +11,4 @@ data Database = Database
     , documents :: [Document]
     , expenses  :: [Expense]
     , version   :: UTCTime
-    }
+    } deriving (Show, Read)
