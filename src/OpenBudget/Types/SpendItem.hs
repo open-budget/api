@@ -2,12 +2,8 @@
 
 module OpenBudget.Types.SpendItem where
 
-import           Data.Bson    ((=:))
-import qualified Data.Bson    as Bson (Document)
 import           Data.Char    (isDigit)
 import           Data.Text    (Text)
-import           Data.UUID    (UUID, toString)
-import           Data.UUID.V4
 import qualified Text.CSV     as CSV
 import qualified Text.Read.HT as HT
 
@@ -15,7 +11,7 @@ import qualified Text.Read.HT as HT
 -- | Стаття витрат
 data SpendItem = SpendItem
 
-    { spendItemId          :: UUID         -- унікальний ідентифікатор статті витрат
+    { spendItemId          :: String       -- унікальний ідентифікатор статті витрат
 
     , spendItemAreaId      :: Int          -- внутрішній код регіону (0 - Україна, 1-24 - областi)
     , spendItemDocumentId  :: Text         -- посилання на id документу
@@ -48,14 +44,13 @@ data SpendItem = SpendItem
 -- | Розбирання статті витрат за складовими частинами
 --   (порядок полей визначений у законодавчих актах)
 fromCSV :: CSV.Record           -- ^ результат парсингу CVS
-        -> IO (Maybe SpendItem) -- ^ можлива стаття витрат
+        -> Maybe SpendItem -- ^ можлива стаття витрат
 fromCSV (c:cn:gft:gfw:gfu:sft:ct:cw:cu:dt:db:ce:t:[])
 
     -- код повинен складатися не менш ніж з п'яти цифр
-    | all isDigit c && length c > 5 = do
-        uuid <- nextRandom
-        return $ Just SpendItem
-            { spendItemId          = uuid
+    | all isDigit c && length c > 5 =
+        Just SpendItem
+            { spendItemId          = ""
             , spendItemAreaId      = 0
             , spendItemDocumentId  = ""
             , spendItemYear        = 2014
@@ -73,40 +68,22 @@ fromCSV (c:cn:gft:gfw:gfu:sft:ct:cw:cu:dt:db:ce:t:[])
             , capitalExpenditures  = md ce
             , total                = read (removeCommas t) :: Double
             }
-    | otherwise = return Nothing
+    | otherwise = Nothing
         where md i = HT.maybeRead (removeCommas i) :: Maybe Double
               removeCommas = filter (/= ',')
-fromCSV _ = return Nothing
+fromCSV _ = Nothing
 
-
--- | Конвертування статті витрат для зберігання в mongodb
-toBSON :: SpendItem     -- ^ стаття витрат
-       -> Bson.Document -- ^ bson-предстaвлення статті
-toBSON s =
-    [ "spendItemId"          =: toString (spendItemId s)
-    , "spendItemAreaId"      =: spendItemAreaId s
-    , "spendItemDocumentId"  =: spendItemDocumentId s
-    , "spendItemYear"        =: spendItemYear s
-
-    , "code"                 =: code s
-    , "codeName"             =: codeName s
-    , "total"                =: total s
-
-    , "generalFundWages"     =: generalFundWages s
-    , "generalFundUtilities" =: generalFundUtilities s
-    , "generalFundTotal"     =: generalFundTotal s
-
-    , "specialFundTotal"     =: specialFundTotal s
-    , "consumptionWages"     =: consumptionWages s
-    , "consumptionUtilities" =: consumptionUtilities s
-    , "consumptionTotal"     =: consumptionTotal s
-    , "developmentBudget"    =: developmentBudget s
-    , "capitalExpenditures"  =: capitalExpenditures s
-    , "developmentTotal"     =: developmentTotal s
-    ]
 
 -- конвертування статті розходів для представлення в веб api
 -- toJSON
+
+
+-- | Оновлення унікального ідентифікатора статті витрат, побудованого з
+--   року прийняття, коду регіону та коду статті витрат
+updateItemId :: SpendItem -> SpendItem
+updateItemId si = si { spendItemId = code' }
+    where [y, a, c] = fmap show [ spendItemYear si, spendItemAreaId si, read (code si) :: Int]
+          code' = y ++ "-" ++ a ++ "-" ++ c
 
 
 -- | Оновлення внутрішнього коду регіону у створеній статті витрат

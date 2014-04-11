@@ -2,28 +2,25 @@
 
 module OpenBudget.Types.Document where
 
-import           Data.Bson ((=:))
-import qualified Data.Bson as BSON (Document)
-import           Data.UUID (UUID, toString)
-
+import           Data.Char (isDigit)
+import qualified Text.CSV  as CSV
 
 -- | Документ, який фіксує обсяги та шляхи бюджетування
 data Document = Document
-    { documentId   :: UUID    -- унікальний ідентифікатор документу
-    , documentName :: String  -- назва документу
-    , documentYear :: Int     -- період бюджетування
-    , documentLink :: String  -- посилання на джерело документу
-    , documentType :: Int     -- тип документу
+    { documentId          :: String  -- унікальний ідентифікатор документу
+    , documentYear        :: Int     -- період
+    , documentArea        :: Int     -- регіон
+    , documentName        :: String  -- назва документу
+    , documentDescription :: String  -- додаткові дані
+    , documentLink        :: String  -- посилання на джерело документу
+    , documentType        :: Int     -- тип документу
+    , documentFilename    :: String
     } deriving (Show, Read, Eq)
 
-
--- | Конвертування документу для зберігання в mongodb
-toBSON :: Document      -- ^ внутрішнє представлення документу
-       -> BSON.Document -- ^ bson-представлення
-toBSON d =
-    [ "documentId"   =: toString (documentId d)
-    , "documentName" =: documentName d
-    , "documentYear" =: documentYear d
-    , "documentLink" =: documentLink d
-    , "documentType" =: documentType d
-    ]
+fromCSV :: CSV.Record
+        -> Maybe Document
+fromCSV (id':y:a:n:d:l:t:f:[])
+    | all isDigit id' = Just (Document id' (i y) (i a) n d l (i t) f)
+    | otherwise       = Nothing
+    where i x = read x :: Int
+fromCSV _ = Nothing

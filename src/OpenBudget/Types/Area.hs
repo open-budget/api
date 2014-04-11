@@ -2,8 +2,6 @@
 
 module OpenBudget.Types.Area where
 
-import           Data.Bson ((=:))
-import qualified Data.Bson as Bson (Document)
 import           Data.Char (isDigit)
 import qualified Text.CSV  as CSV
 
@@ -25,11 +23,5 @@ fromCSV (id':name:[])
 fromCSV _ = Nothing
 
 
--- | Конвертування регіону для зберігання в mongodb
-toBSON :: Area          -- ^ внутрішнє представлення регіону
-       -> Bson.Document -- ^ bson-представлення
-toBSON a = [ "areaId" =: areaId a, "areaName" =: areaName a ]
-
-
--- конвертування статті розходів для представлення в веб api
+-- конвертування регіону для представлення в веб api
 -- toJSON
