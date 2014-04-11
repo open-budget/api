@@ -5,17 +5,18 @@ module OpenBudget.Types.SpendItem where
 import           Data.Bson    ((=:))
 import qualified Data.Bson    as Bson (Document)
 import           Data.Char    (isDigit)
+import           Data.Text    (Text)
 import qualified Text.CSV     as CSV
 import qualified Text.Read.HT as HT
 
 -- | Стаття росходів
 data SpendItem = SpendItem
 
-    -- рік
-    -- область
-    -- документ
+    { areaId               :: Int          -- внутрішній код регіону (0 - Україна, 1-24 - областi)
+    , documentId           :: Text         -- посилання на id документу
+    , year                 :: Int          -- звітний період
 
-    { code                 :: String       -- код ТКВ на кредитування місцевих бюджетів
+    , code                 :: String       -- код ТКВ на кредитування місцевих бюджетів
     , codeName             :: String       -- найменування коду тимчасової класифікації видатків та кредитування місцевих бюджетів
     , total                :: Double       -- загальна сума
 
@@ -48,7 +49,10 @@ fromCSV (c:cn:gft:gfw:gfu:sft:ct:cw:cu:dt:db:ce:t:[])
     -- код повинен складатися не менш ніж з п'яти цифр
     | all isDigit c && length c > 5 =
         Just SpendItem
-            { code                 = c
+            { areaId               = 0
+            , documentId           = ""
+            , year                 = 2014
+            , code                 = c
             , codeName             = cn
             , generalFundTotal     = md gft
             , generalFundWages     = md gfw
@@ -72,7 +76,11 @@ fromCSV _ = Nothing
 toBSON :: SpendItem     -- ^ стаття розходів
        -> Bson.Document -- ^ bson-предстaвлення статті
 toBSON s =
-    [ "code"                 =: code s
+    [ "areaId"               =: areaId s
+    , "documentId"           =: documentId s
+    , "year"                 =: year s
+
+    , "code"                 =: code s
     , "codeName"             =: codeName s
     , "total"                =: total s
 
@@ -89,6 +97,27 @@ toBSON s =
     , "developmentTotal"     =: developmentTotal s
     ]
 
-
 -- конвертування статті розходів для представлення в веб api
 -- toJSON
+
+
+-- | Оновлення внутрішнього коду регіону у створеній статті розходів
+updateAreaId :: SpendItem -- ^ стаття розходів для оновлення
+             -> Int       -- ^ новий код регіону
+             -> SpendItem -- ^ оновлена стаття розходів
+updateAreaId si aid = si { areaId=aid }
+
+
+-- | Оновлення ідентифікатора документу у створенній статті розходів
+updateDocumentId :: SpendItem -- ^ стаття розходів для оновлення
+                 -> Text      -- ^ новий ідентифікатор документу
+                 -> SpendItem -- ^ оновлена стаття розходів
+updateDocumentId si did = si { documentId=did }
+
+
+-- | Оновлення звітного періоду у створенній статті розходів
+updateYear :: SpendItem -- ^ стаття розходів для оновлення
+           -> Int       -- ^ новий ідентифікатор документу
+           -> SpendItem -- ^ оновлена стаття розходів
+updateYear si y = si { year=y }
+
