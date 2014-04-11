@@ -36,7 +36,7 @@ data SpendItem = SpendItem
     , developmentBudget    :: Maybe Double -- бюджет розвитку
     , capitalExpenditures  :: Maybe Double -- капітальні видатки
     , developmentTotal     :: Maybe Double -- всього
-    } deriving (Show, Read)
+    } deriving (Show, Read, Eq)
 
 
 -- | Розбирання статті розходу за складовими частинами

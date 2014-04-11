@@ -34,10 +34,11 @@ executable open-budget-database
 
 
 test-suite test
-    hs-source-dirs:  spec
-    main-is:         Spec.hs
-    type:            exitcode-stdio-1.0
-    ghc-options:     -Wall
-    build-depends:   base
-                     , open-budget-database
-                     , hspec                 == 1.9.2
+    hs-source-dirs:   spec
+    main-is:          Spec.hs
+    type:             exitcode-stdio-1.0
+    ghc-options:      -Wall -fhpc -hpcdir dist/hpc/open-budget-database-0.0.1.0
+    build-depends:    base
+                      , open-budget-database
+                      , hspec                 == 1.9.2
+                      , csv                  == 0.1.1
