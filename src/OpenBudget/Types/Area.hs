@@ -17,7 +17,6 @@ data Area = Area
 fromCSV :: CSV.Record -- ^ результат парсингу CVS
         -> Maybe Area -- ^ можлива стаття розходів
 fromCSV (id':name:[])
-    -- код регіону повинен  складатися лише з цифр
     | all isDigit id' = Just Area { areaId =  read id' :: Int, areaName = name }
     | otherwise       = Nothing
 fromCSV _ = Nothing
