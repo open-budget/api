@@ -21,6 +21,7 @@ library
                       , text
     default-language: Haskell2010
     exposed-modules:  OpenBudget.Types.SpendItem
+                      OpenBudget.Types.Area
     hs-source-dirs:   src
 
 
