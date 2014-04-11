@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module OpenBudget.Types.SpendItem where
+module OpenBudget.Types.Expense where
 
 import           Data.Char    (isDigit)
 import           Data.Text    (Text)
@@ -9,13 +9,13 @@ import qualified Text.Read.HT as HT
 
 
 -- | Стаття витрат
-data SpendItem = SpendItem
+data Expense = Expense
 
-    { spendItemId          :: String       -- унікальний ідентифікатор статті витрат
+    { expenseId            :: String       -- унікальний ідентифікатор статті витрат
 
-    , spendItemAreaId      :: Int          -- внутрішній код регіону (0 - Україна, 1-24 - областi)
-    , spendItemDocumentId  :: Text         -- посилання на id документу
-    , spendItemYear        :: Int          -- звітний період
+    , expenseAreaId        :: Int          -- внутрішній код регіону (0 - Україна, 1-24 - областi)
+    , expenseDocumentId    :: Text         -- посилання на id документу
+    , expenseYear          :: Int          -- звітний період
 
     , code                 :: String       -- код ТКВ на кредитування місцевих бюджетів
     , codeName             :: String       -- найменування коду тимчасової класифікації видатків та кредитування місцевих бюджетів
@@ -43,17 +43,17 @@ data SpendItem = SpendItem
 
 -- | Розбирання статті витрат за складовими частинами
 --   (порядок полей визначений у законодавчих актах)
-fromCSV :: CSV.Record           -- ^ результат парсингу CVS
-        -> Maybe SpendItem -- ^ можлива стаття витрат
+fromCSV :: CSV.Record    -- ^ результат парсингу CVS
+        -> Maybe Expense -- ^ можлива стаття витрат
 fromCSV (c:cn:gft:gfw:gfu:sft:ct:cw:cu:dt:db:ce:t:[])
 
     -- код повинен складатися не менш ніж з п'яти цифр
     | all isDigit c && length c > 5 =
-        Just SpendItem
-            { spendItemId          = ""
-            , spendItemAreaId      = 0
-            , spendItemDocumentId  = ""
-            , spendItemYear        = 2014
+        Just Expense
+            { expenseId          = ""
+            , expenseAreaId      = 0
+            , expenseDocumentId  = ""
+            , expenseYear        = 2014
             , code                 = c
             , codeName             = cn
             , generalFundTotal     = md gft
@@ -80,29 +80,29 @@ fromCSV _ = Nothing
 
 -- | Оновлення унікального ідентифікатора статті витрат, побудованого з
 --   року прийняття, коду регіону та коду статті витрат
-updateItemId :: SpendItem -> SpendItem
-updateItemId si = si { spendItemId = code' }
-    where [y, a, c] = fmap show [ spendItemYear si, spendItemAreaId si, read (code si) :: Int]
+updateItemId :: Expense -> Expense
+updateItemId si = si { expenseId = code' }
+    where [y, a, c] = fmap show [ expenseYear si, expenseAreaId si, read (code si) :: Int]
           code' = y ++ "-" ++ a ++ "-" ++ c
 
 
 -- | Оновлення внутрішнього коду регіону у створеній статті витрат
-updateAreaId :: SpendItem -- ^ стаття розходів для оновлення
-             -> Int       -- ^ новий код регіону
-             -> SpendItem -- ^ оновлена стаття розходів
-updateAreaId si aid = si { spendItemAreaId=aid }
+updateAreaId :: Expense -- ^ стаття розходів для оновлення
+             -> Int     -- ^ новий код регіону
+             -> Expense -- ^ оновлена стаття розходів
+updateAreaId si aid = si { expenseAreaId=aid }
 
 
 -- | Оновлення ідентифікатора документу у створенній статті розходів
-updateDocumentId :: SpendItem -- ^ стаття розходів для оновлення
-                 -> Text      -- ^ новий ідентифікатор документу
-                 -> SpendItem -- ^ оновлена стаття розходів
-updateDocumentId si did = si { spendItemDocumentId=did }
+updateDocumentId :: Expense -- ^ стаття розходів для оновлення
+                 -> Text    -- ^ новий ідентифікатор документу
+                 -> Expense -- ^ оновлена стаття розходів
+updateDocumentId si did = si { expenseDocumentId=did }
 
 
 -- | Оновлення звітного періоду у створенній статті розходів
-updateYear :: SpendItem -- ^ стаття розходів для оновлення
-           -> Int       -- ^ новий ідентифікатор документу
-           -> SpendItem -- ^ оновлена стаття розходів
-updateYear si y = si { spendItemYear=y }
+updateYear :: Expense -- ^ стаття розходів для оновлення
+           -> Int     -- ^ новий ідентифікатор документу
+           -> Expense -- ^ оновлена стаття розходів
+updateYear si y = si { expenseYear=y }
 
