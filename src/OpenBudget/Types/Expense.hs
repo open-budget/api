@@ -2,10 +2,10 @@
 
 module OpenBudget.Types.Expense where
 
-import           Data.Char    (isDigit)
-import           Data.Text    (Text)
-import qualified Text.CSV     as CSV
-import qualified Text.Read.HT as HT
+import           Data.Char                 (isDigit)
+import           OpenBudget.Types.Document hiding (fromCSV)
+import qualified Text.CSV                  as CSV
+import qualified Text.Read.HT              as HT
 
 
 -- | Стаття витрат
@@ -14,7 +14,7 @@ data Expense = Expense
     { expenseId            :: String       -- унікальний ідентифікатор статті витрат
 
     , expenseAreaId        :: Int          -- внутрішній код регіону (0 - Україна, 1-24 - областi)
-    , expenseDocumentId    :: Text         -- посилання на id документу
+    , expenseDocumentId    :: Int          -- посилання на id документу
     , expenseYear          :: Int          -- звітний період
 
     , code                 :: String       -- код ТКВ на кредитування місцевих бюджетів
@@ -50,10 +50,10 @@ fromCSV (c:cn:gft:gfw:gfu:sft:ct:cw:cu:dt:db:ce:t:[])
     -- код повинен складатися не менш ніж з п'яти цифр
     | all isDigit c && length c > 5 =
         Just Expense
-            { expenseId          = ""
-            , expenseAreaId      = 0
-            , expenseDocumentId  = ""
-            , expenseYear        = 2014
+            { expenseId            = ""
+            , expenseAreaId        = 0
+            , expenseDocumentId    = 0
+            , expenseYear          = 0
             , code                 = c
             , codeName             = cn
             , generalFundTotal     = md gft
@@ -87,22 +87,28 @@ updateItemId si = si { expenseId = code' }
 
 
 -- | Оновлення внутрішнього коду регіону у створеній статті витрат
-updateAreaId :: Expense -- ^ стаття розходів для оновлення
-             -> Int     -- ^ новий код регіону
+updateAreaId :: Int     -- ^ новий код регіону
+             -> Expense -- ^ стаття розходів для оновлення
              -> Expense -- ^ оновлена стаття розходів
-updateAreaId si aid = si { expenseAreaId=aid }
+updateAreaId aid si = si { expenseAreaId=aid }
 
 
 -- | Оновлення ідентифікатора документу у створенній статті розходів
-updateDocumentId :: Expense -- ^ стаття розходів для оновлення
-                 -> Text    -- ^ новий ідентифікатор документу
+updateDocumentId :: Int     -- ^ новий ідентифікатор документу
+                 -> Expense -- ^ стаття розходів для оновлення
                  -> Expense -- ^ оновлена стаття розходів
-updateDocumentId si did = si { expenseDocumentId=did }
+updateDocumentId did si = si { expenseDocumentId=did }
 
 
 -- | Оновлення звітного періоду у створенній статті розходів
-updateYear :: Expense -- ^ стаття розходів для оновлення
-           -> Int     -- ^ новий ідентифікатор документу
+updateYear :: Int     -- ^ новий ідентифікатор документу
+           -> Expense -- ^ стаття розходів для оновлення
            -> Expense -- ^ оновлена стаття розходів
-updateYear si y = si { expenseYear=y }
+updateYear y si = si { expenseYear=y }
 
+
+-- | Прив'язка статті витрат до конкретного документу та оновлення регіону та періоду
+linkToDocument :: Document --^
+               -> Expense  --^
+               -> Expense  --^
+linkToDocument doc = updateItemId . updateYear (documentYear doc) . updateDocumentId (read (documentId doc) :: Int) . updateAreaId (documentArea doc)
