@@ -1,8 +1,11 @@
+{-# LANGUAGE DeriveGeneric     #-}
 {-# LANGUAGE OverloadedStrings #-}
 
 module OpenBudget.Types.Expense where
 
+import           Data.Aeson                (ToJSON)
 import           Data.Char                 (isDigit)
+import           GHC.Generics
 import           OpenBudget.Types.Document hiding (fromCSV)
 import qualified Text.CSV                  as CSV
 import qualified Text.Read.HT              as HT
@@ -38,7 +41,11 @@ data Expense = Expense
     , developmentBudget    :: Maybe Double -- бюджет розвитку
     , capitalExpenditures  :: Maybe Double -- капітальні видатки
     , developmentTotal     :: Maybe Double -- всього
-    } deriving (Show, Read, Eq)
+    } deriving (Show, Read, Eq, Generic)
+
+
+-- конвертування статті розходів для представлення в веб api
+instance ToJSON Expense
 
 
 -- | Розбирання статті витрат за складовими частинами
@@ -72,10 +79,6 @@ fromCSV (c:cn:gft:gfw:gfu:sft:ct:cw:cu:dt:db:ce:t:[])
         where md i = HT.maybeRead (removeCommas i) :: Maybe Double
               removeCommas = filter (/= ',')
 fromCSV _ = Nothing
-
-
--- конвертування статті розходів для представлення в веб api
--- toJSON
 
 
 -- | Оновлення унікального ідентифікатора статті витрат, побудованого з

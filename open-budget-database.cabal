@@ -11,8 +11,10 @@ maintainer:           mail@grsmv.com
 category:             Web
 build-type:           Simple
 cabal-version:        >=1.10
-data-files:           data/*.csv
-                      , data/documents/*.csv
+data-files:
+    data/*.csv
+    , data/documents/*.csv
+    , resourses/index.html
 
 
 library
@@ -34,6 +36,7 @@ library
         , text
         , time
         , utility-ht == 0.0.8
+        , aeson == 0.7.0.3
 
 
 executable open-budget-database
