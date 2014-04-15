@@ -28,5 +28,6 @@ main = do
             jsonUtf8 (expenses db)
 
         where jsonUtf8 xs = do
+                setHeader "Access-Control-Allow-Origin" "*"
                 setHeader "Content-Type" "application/json; charset=utf-8"
                 raw $ encode xs
