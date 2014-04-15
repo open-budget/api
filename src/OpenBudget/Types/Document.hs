@@ -1,11 +1,9 @@
-{-# LANGUAGE DeriveGeneric     #-}
 {-# LANGUAGE OverloadedStrings #-}
 
 module OpenBudget.Types.Document where
 
-import           Data.Aeson   (ToJSON)
+import           Data.Aeson   (ToJSON, toJSON, object, (.=))
 import           Data.Char    (isDigit)
-import           GHC.Generics
 import qualified Text.CSV     as CSV
 
 
@@ -19,11 +17,20 @@ data Document = Document
     , documentLink        :: String  -- посилання на джерело документу
     , documentType        :: String  -- тип документу
     , documentFilename    :: String
-    } deriving (Show, Read, Eq, Generic)
+    } deriving (Show, Read, Eq)
 
 
 -- | Конвертування документу для представлення в веб api
-instance ToJSON Document
+instance ToJSON Document where
+    toJSON (Document id_ year area name desc link type_ _) = object
+        [ "id"          .= id_
+        , "year"        .= year
+        , "area"        .= area
+        , "name"        .= name
+        , "description" .= desc
+        , "link"        .= link
+        , "type"        .= type_
+        ]
 
 
 -- | Конвертація результату парсингу CSV у внутрішнє представлення

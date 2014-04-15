@@ -1,11 +1,9 @@
-{-# LANGUAGE DeriveGeneric     #-}
 {-# LANGUAGE OverloadedStrings #-}
 
 module OpenBudget.Types.Area where
 
-import           Data.Aeson   (ToJSON)
+import           Data.Aeson   (ToJSON, toJSON, object, (.=))
 import           Data.Char    (isDigit)
-import           GHC.Generics
 import qualified Text.CSV     as CSV
 
 
@@ -13,10 +11,14 @@ import qualified Text.CSV     as CSV
 data Area = Area
     { areaId   :: Int     -- внутрішній код регіону (0 - Україна, 1-24 - областi)
     , areaName :: String  -- назва регіону
-    } deriving (Show, Read, Eq, Generic)
+    } deriving (Show, Read, Eq)
 
 -- конвертування регіону для представлення в веб api
-instance ToJSON Area
+instance ToJSON Area where
+    toJSON (Area id' name) = object
+        [ "id"   .= id'
+        , "name" .= name
+        ]
 
 
 -- | Конвертація результату парсингу CSV у внутрішнє представлення
