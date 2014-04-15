@@ -114,4 +114,4 @@ updateYear y si = si { expenseYear=y }
 linkToDocument :: Document -- ^ документ, до якого буде прив'язана стаття розходів
                -> Expense  -- ^ первинна стаття розходів
                -> Expense  -- ^ прив'язана стаття розходів
-linkToDocument doc = updateItemId . updateYear (documentYear doc) . updateDocumentId (read (documentId doc) :: Int) . updateAreaId (documentArea doc)
+linkToDocument doc = updateItemId . updateYear (documentYear doc) . updateDocumentId (documentId doc) . updateAreaId (documentArea doc)

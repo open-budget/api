@@ -31,12 +31,13 @@ library
 
     build-depends:
         base
+        , aeson == 0.7.0.3
         , csv == 0.1.1
         , hspec == 1.9.2
+        , scotty == 0.7.2
         , text
         , time
         , utility-ht == 0.0.8
-        , aeson == 0.7.0.3
 
 
 executable open-budget-database
@@ -49,8 +50,8 @@ executable open-budget-database
         base
         , aeson == 0.7.0.3
         , csv == 0.1.1
-        , scotty == 0.7.2
         , open-budget-database
+        , scotty == 0.7.2
 
 
 test-suite test

@@ -4,9 +4,11 @@ module Main where
 
 import           OpenBudget.Builder
 import           OpenBudget.Types.Database
+import           OpenBudget.Types.Document hiding (fromCSV)
 import           Web.Scotty
 import           Paths_open_budget_database (getDataFileName)
 import           Data.Aeson (encode)
+--import Control.Monad.IO.Class (liftIO)
 
 main :: IO ()
 main = do
@@ -21,8 +23,9 @@ main = do
         get "/v1/areas.json" $
             jsonUtf8 (areas db)
 
-        get "/v1/documents.json" $
-            jsonUtf8 (documents db)
+        get "/v1/documents.json" $ do
+            params' <- params
+            jsonUtf8 $ select params' (documents db)
 
         get "/v1/expenses.json" $
             jsonUtf8 (expenses db)
