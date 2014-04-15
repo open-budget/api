@@ -19,10 +19,15 @@ data Document = Document
     } deriving (Show, Read, Eq)
 
 
-fromCSV :: CSV.Record
-        -> Maybe Document
+-- | Конвертація результату парсингу CSV у внутрішнє представлення
+fromCSV :: CSV.Record     -- ^ результат парсингу CVS
+        -> Maybe Document -- ^ можливий документ
 fromCSV (id':y:a:n:d:l:t:f:[])
     | all isDigit id' = Just (Document id' (i y) (i a) n d l t f)
     | otherwise       = Nothing
     where i x = read x :: Int
 fromCSV _ = Nothing
+
+
+-- | Конвертування документу для представлення в веб api
+-- toJSON
