@@ -118,7 +118,7 @@
             font-family: "Ubuntu Mono", sans-serif;
         }
 
-        .documentation-body span.note {
+        span.note {
             color: #555;
             font-size: .8em;
             display: block;
@@ -166,9 +166,96 @@
             text-decoration: none;
             border-bottom: none;
         }
+
+        #sample-result {
+            position: fixed;
+            display: none;
+            width: 40%;
+            height: 100%;
+            right: 0;
+            background: #333;
+            top: 0;
+            z-index: 100;
+            box-shadow: #333 0 0 30px;
+        }
+
+        #sample-result h4 {
+             font-family: "Ubuntu", sans-serif;
+             font-weight: 100;
+             color: #ccc;
+             margin-top: 20px;
+        }
+
+        #sample-result .query {
+            color: #ccc;
+            font-family: "Ubuntu Mono";
+            font-weight: 600;
+            margin: 20px 0 20px;
+        }
+
+        #sample-result pre {
+            background: none;
+            color: #ccc;
+            font-family: "Ubuntu Mono";
+            border: none;
+            border-top: 1px solid #666;
+            border-radius: 0;
+        }
+
+        #sample-result #close-cross {
+            color: #fff;
+            margin-top: 20px;
+            cursor: pointer;
+        }
+
+        #sample-result #close-cross:hover {
+            color: #ccc;
+        }
+
+        .sample-code-note {
+            color: #444;
+            display: block;
+            font-size: .8em;
+            margin: 3px 0 0 43px
+        }
+
+        .example-trigger {
+            cursor: pointer;
+        }
     </style>
+    <script>
+        window.onload = function(){
+
+            // закриття прикладу запиту
+            document.getElementById("close-cross").onclick = function(){
+                document.getElementById("sample-result").style.display = "none";
+            };
+
+            // встановлення обробки кліків
+            var resultTriggers = document.getElementsByClassName("showExampleResult");
+            for (var i = resultTriggers.length - 1; i >= 0; i--) {
+                resultTriggers[i].onclick = function () {
+                    document.getElementById("sample-result").style.display = "block";
+                    console.log(this);
+                }
+            };
+        };
+    </script>
 </head>
 <body>
+    <div id="sample-result">
+        <div class="col-md-10 col-md-offset-1">
+            <h4>Приклад результату запиту</h4>
+            <div class="query">
+                <span class="label label-default">GET</span> http://api.open-budget.org/v1/areas.json
+            </div>
+            <pre><script>document.write(JSON.stringify( [{"id":0,"name":"Україна"},{"id":1,"name":"Вінницька область"},{"id":2,"name":"Волинська область"},{"id":3,"name":"Дніпропетровська область"},{"id":4,"name":"Донецька область"}], null, '\t' ))</script>
+            </pre>
+        </div>
+        <div class="col-md-1">
+            <div id="close-cross">✕</div>
+        </div>
+    </div>
     <div id="documentation">
         <div class="container-fluid">
             <div class="row documentation-header">
@@ -279,9 +366,17 @@
                         </p>
 
                         <p class="part">
-                            <h4>Приклад запиту</h4>
-                            <span class="label label-default">GET</span>
-                            <code>https://api.open-budget.net/v1/expenses.json?area_id=12&year=2014</code>
+                            <div class="example-trigger">
+                                <h4>Приклад запиту</h4>
+                                <span class="label label-default">GET</span>
+                                <code class="showExampleResult">
+                                    https://api.open-budget.net/v1/expenses.json?area_id=12&year=2014
+                                </code>
+
+                                <span class="sample-code-note">
+                                    (Натисніть для того щоб подивитись результат запиту)
+                                </span>
+                            </div>
                         </p>
                     </section>
 
