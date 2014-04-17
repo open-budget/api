@@ -4,6 +4,7 @@ module Main where
 
 import           Data.Aeson                 (encode)
 import           OpenBudget.Builder
+import qualified OpenBudget.Types.Area      as Area (select)
 import           OpenBudget.Types.Database
 import qualified OpenBudget.Types.Document  as Document (select)
 import qualified OpenBudget.Types.Expense   as Expense (select)
@@ -20,8 +21,9 @@ main = do
         get "/" $
             file doc
 
-        get "/v1/areas.json" $
-            jsonUtf8 (areas db)
+        get "/v1/areas.json" $ do
+            params' <- params
+            jsonUtf8 $ Area.select params' (areas db)
 
         get "/v1/documents.json" $ do
             params' <- params
