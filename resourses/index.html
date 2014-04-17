@@ -6,10 +6,10 @@
 
     <title>Відкритий бюджет REST API</title>
 
-    <link href='http://fonts.googleapis.com/css?family=Ubuntu&subset=cyrillic-ext,latin' rel='stylesheet' type='text/css'>
-    <link href='http://fonts.googleapis.com/css?family=Ubuntu+Mono&subset=cyrillic-ext,latin' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" href="http://raw.githubusercontent.com/necolas/normalize.css/master/normalize.css">
-    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+    <link href='//fonts.googleapis.com/css?family=Ubuntu&subset=cyrillic-ext,latin' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Ubuntu+Mono&subset=cyrillic-ext,latin' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="//raw.githubusercontent.com/necolas/normalize.css/master/normalize.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
 
     <style>
         body, html {
@@ -277,16 +277,10 @@
                     document.getElementById("sample-result").style.display = "block";
 
                     // loading json
-                    var host    = "http://localhost:3000"
-                        address = this.querySelector("code").innerHTML,
-                        parser  = document.createElement("a");
+                    var address = this.querySelector("code").innerHTML,
+                        r = new XMLHttpRequest();
 
-                    // parsing url
-                    parser.href = address;
-
-                    // making request
-                    var r = new XMLHttpRequest();
-                    r.open("GET", host + parser.pathname + "" + parser.search, true);
+                    r.open("GET", address, true);
                     r.onreadystatechange = function(){
                         if (r.readyState !== 4 || r.status !== 200) return;
 
