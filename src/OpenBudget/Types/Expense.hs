@@ -4,11 +4,14 @@
 module OpenBudget.Types.Expense where
 
 import           Data.Aeson                (ToJSON)
-import           Data.Char                 (isDigit)
+import           Data.Char                 (isDigit, toLower)
+import           Data.List                 (isInfixOf)
+import           Data.Text.Lazy            (unpack)
 import           GHC.Generics
-import           OpenBudget.Types.Document hiding (fromCSV)
+import           OpenBudget.Types.Document hiding (fromCSV, select)
 import qualified Text.CSV                  as CSV
 import qualified Text.Read.HT              as HT
+import           Web.Scotty                (Param)
 
 
 -- | Стаття витрат
@@ -115,3 +118,27 @@ linkToDocument :: Document -- ^ документ, до якого буде пр�
                -> Expense  -- ^ первинна стаття розходів
                -> Expense  -- ^ прив'язана стаття розходів
 linkToDocument doc = updateItemId . updateYear (documentYear doc) . updateDocumentId (documentId doc) . updateAreaId (documentArea doc)
+
+
+-- | Створення виборки серед видатків по заданим параметрам. Параметри беруться
+--   з рядка запиту (http query string). При наявності декілька ключів у параметра
+--   виборка відфільтрованих видатків звужується кожною новою фільтрацією.
+select :: [Param]   -- ^ перелік кортежів параметрів запиту у вигляді (ключ, значення)
+       -> [Expense] -- ^ первинний перелік видатків
+       -> [Expense] -- ^ видатки, шо задовольняють введений параметрам запиту
+select [] docs = docs
+select _  []   = []
+select ((key',value'):params) expenses =
+
+    case key of
+        "area"   -> select params (sameInt expenses expenseAreaId)
+        "year"   -> select params (sameInt expenses expenseYear)
+        "id"     -> select params (filter (\e -> value == expenseId e) expenses)
+        "code"   -> select params (filter (\e -> value == code e) expenses)
+        "search" -> select params (filter (\e -> map toLower value `isInfixOf` map toLower (codeName e)) expenses)
+
+        -- скiпаємо будь-які незнані ключі
+        _        -> select params expenses
+
+        where sameInt documents field = filter (\doc -> (read value :: Int) == field doc) documents
+              (key, value) = (unpack key', unpack value')

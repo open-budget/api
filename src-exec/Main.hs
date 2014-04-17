@@ -2,12 +2,13 @@
 
 module Main where
 
+import           Data.Aeson                 (encode)
 import           OpenBudget.Builder
 import           OpenBudget.Types.Database
-import           OpenBudget.Types.Document hiding (fromCSV)
-import           Web.Scotty
+import qualified OpenBudget.Types.Document  as Document (select)
+import qualified OpenBudget.Types.Expense   as Expense (select)
 import           Paths_open_budget_database (getDataFileName)
-import           Data.Aeson (encode)
+import           Web.Scotty
 
 main :: IO ()
 main = do
@@ -24,10 +25,11 @@ main = do
 
         get "/v1/documents.json" $ do
             params' <- params
-            jsonUtf8 $ select params' (documents db)
+            jsonUtf8 $ Document.select params' (documents db)
 
-        get "/v1/expenses.json" $
-            jsonUtf8 (expenses db)
+        get "/v1/expenses.json" $ do
+            params' <- params
+            jsonUtf8 $ Expense.select params' (expenses db)
 
         where jsonUtf8 xs = do
                 setHeader "Access-Control-Allow-Origin" "*"
