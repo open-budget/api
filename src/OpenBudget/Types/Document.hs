@@ -4,6 +4,7 @@ module OpenBudget.Types.Document where
 
 import           Data.Aeson     (ToJSON, object, toJSON, (.=))
 import           Data.Char      (isDigit)
+import           Data.List      (isPrefixOf)
 import           Data.Text.Lazy (unpack)
 import qualified Text.CSV       as CSV
 import           Web.Scotty     (Param)
@@ -45,16 +46,24 @@ fromCSV (id':y:a:n:d:l:t:f:[])
 fromCSV _ = Nothing
 
 
-select :: [Param] -> [Document] -> [Document]
-select [] ds = ds
-select _  [] = []
-select ((k',v'):ps') docs =
+-- | Створення виборки серед документів по заданим параметрам. Параметри беруться
+--   з рядка запиту (http query string). При наявності декілька ключів у параметра
+--   виборка відфільтрованих документів звужується кожною новою фільтрацією.
+select :: [Param]    -- ^ перелік кортежів параметрів запиту у вигляді (ключ, значення)
+       -> [Document] -- ^ первинний перелік документів
+       -> [Document] -- ^ документи, шо задовольняють введений параметрам запиту
+select [] docs = docs
+select _  []   = []
+select ((key',value'):params) docs =
 
-    case k of
-        "area" -> select ps' (sameInt docs documentArea)
-        "year" -> select ps' (sameInt docs documentYear)
-        "id"   -> select ps' (sameInt docs documentId)
-        _      -> select ps' docs -- скiпаємо будь-які незнані ключі
+    case key of
+        "area"   -> select params (sameInt docs documentArea)
+        "year"   -> select params (sameInt docs documentYear)
+        "id"     -> select params (sameInt docs documentId)
+        "search" -> select params (filter (\doc -> value `isPrefixOf` documentName doc) docs)
 
-        where (k, v) = (unpack k', unpack v')
-              sameInt ds'' f = filter (\d -> (read v :: Int) == f d) ds''
+        -- скiпаємо будь-які незнані ключі
+        _        -> select params docs
+
+        where sameInt documents field = filter (\doc -> (read value :: Int) == field doc) documents
+              (key, value) = (unpack key', unpack value')

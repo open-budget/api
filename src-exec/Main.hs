@@ -8,7 +8,6 @@ import           OpenBudget.Types.Document hiding (fromCSV)
 import           Web.Scotty
 import           Paths_open_budget_database (getDataFileName)
 import           Data.Aeson (encode)
---import Control.Monad.IO.Class (liftIO)
 
 main :: IO ()
 main = do
