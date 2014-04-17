@@ -28,7 +28,7 @@ instance ToJSON Document where
     toJSON (Document id_ year area name desc link type_ _) = object
         [ "id"          .= id_
         , "year"        .= year
-        , "area"        .= area
+        , "area_id"     .= area
         , "name"        .= name
         , "description" .= desc
         , "link"        .= link
@@ -55,15 +55,19 @@ select :: [Param]    -- ^ перелік кортежів параметрів �
 select [] docs = docs
 select _  []   = []
 select ((key',value'):params) docs =
-
     case key of
         "area_id" -> select params (sameInt docs documentArea)
         "year"    -> select params (sameInt docs documentYear)
         "id"      -> select params (sameInt docs documentId)
         "search"  -> select params (filter (\doc -> map toLower value `isInfixOf` map toLower (documentName doc)) docs)
+        _         -> select params docs -- скiпаємо будь-які незнані ключі
 
-        -- скiпаємо будь-які незнані ключі
-        _        -> select params docs
+        where sameInt docs' field =
+                -- в разі передачі списку значень замість одного, шукаємо
+                -- співпадіння кожного з введеного переліку
+                if "," `isInfixOf` value
+                    then filter (\d -> [field d] `isInfixOf` valueList) docs'
+                    else filter (\d -> (read value :: Int) == field d) docs'
 
-        where sameInt documents field = filter (\doc -> (read value :: Int) == field doc) documents
+              valueList = read ("[" ++ value ++ "]") :: [Int]
               (key, value) = (unpack key', unpack value')

@@ -1,13 +1,11 @@
-{-# LANGUAGE DeriveGeneric     #-}
 {-# LANGUAGE OverloadedStrings #-}
 
 module OpenBudget.Types.Expense where
 
-import           Data.Aeson                (ToJSON)
+import           Data.Aeson                (ToJSON, object, toJSON, (.=))
 import           Data.Char                 (isDigit, toLower)
 import           Data.List                 (isInfixOf)
 import           Data.Text.Lazy            (unpack)
-import           GHC.Generics
 import           OpenBudget.Types.Document hiding (fromCSV, select)
 import qualified Text.CSV                  as CSV
 import qualified Text.Read.HT              as HT
@@ -44,11 +42,30 @@ data Expense = Expense
     , developmentBudget    :: Maybe Double -- бюджет розвитку
     , capitalExpenditures  :: Maybe Double -- капітальні видатки
     , developmentTotal     :: Maybe Double -- всього
-    } deriving (Show, Read, Eq, Generic)
+    } deriving (Show, Read, Eq)
 
 
 -- конвертування статті розходів для представлення в веб api
-instance ToJSON Expense
+instance ToJSON Expense where
+    toJSON (Expense eid eaid edid ey c cn t gfw gfu gft sft cw cu ct db ce dt) = object
+        [ "id"                     .= eid
+        , "area_id"                .= eaid
+        , "document_id"            .= edid
+        , "year"                   .= ey
+        , "code"                   .= c
+        , "code_name"              .= cn
+        , "total"                  .= t
+        , "general_fund_wages"     .= gfw
+        , "general_fund_utilities" .= gfu
+        , "general_fund_tages"     .= gft
+        , "special_fund_total"     .= sft
+        , "consumption_wages"      .= cw
+        , "consumption_utilities"  .= cu
+        , "consumption_total"      .= ct
+        , "development_budget"     .= db
+        , "capital_expenditures"   .= ce
+        , "development_total"      .= dt
+        ]
 
 
 -- | Розбирання статті витрат за складовими частинами
@@ -126,20 +143,28 @@ linkToDocument doc = updateItemId . updateYear (documentYear doc) . updateDocume
 select :: [Param]   -- ^ перелік кортежів параметрів запиту у вигляді (ключ, значення)
        -> [Expense] -- ^ первинний перелік видатків
        -> [Expense] -- ^ видатки, шо задовольняють введений параметрам запиту
-select [] docs = docs
-select _  []   = []
+select [] expenses = expenses
+select _  []       = []
 select ((key',value'):params) expenses =
-
     case key of
         "area_id"     -> select params (sameInt expenses expenseAreaId)
         "year"        -> select params (sameInt expenses expenseYear)
         "document_id" -> select params (sameInt expenses expenseDocumentId)
         "id"          -> select params (filter (\e -> value == expenseId e) expenses)
-        "code"        -> select params (filter (\e -> value == code e) expenses)
         "search"      -> select params (filter (\e -> map toLower value `isInfixOf` map toLower (codeName e)) expenses)
+        "code"        -> select params $
+                             if "," `isInfixOf` value
+                                 -- обробляємо перелік значень
+                                 then filter (\e -> [read (code e) :: Int] `isInfixOf` valueList) expenses
+                                 else filter (\e -> value == code e) expenses
+        _             -> select params expenses -- скiпаємо будь-які незнані ключі
 
-        -- скiпаємо будь-які незнані ключі
-        _        -> select params expenses
+        where sameInt exps field =
+                  -- в разі передачі списку значень замість одного, шукаємо
+                  -- співпадіння кожного з введеного переліку
+                  if "," `isInfixOf` value
+                      then filter (\d -> [field d] `isInfixOf` valueList) exps
+                      else filter (\e -> (read value :: Int) == field e) exps
 
-        where sameInt documents field = filter (\doc -> (read value :: Int) == field doc) documents
+              valueList = read ("[" ++ value ++ "]") :: [Int]
               (key, value) = (unpack key', unpack value')
