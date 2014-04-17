@@ -57,10 +57,10 @@ select _  []   = []
 select ((key',value'):params) docs =
 
     case key of
-        "area"   -> select params (sameInt docs documentArea)
-        "year"   -> select params (sameInt docs documentYear)
-        "id"     -> select params (sameInt docs documentId)
-        "search" -> select params (filter (\doc -> map toLower value `isInfixOf` map toLower (documentName doc)) docs)
+        "area_id" -> select params (sameInt docs documentArea)
+        "year"    -> select params (sameInt docs documentYear)
+        "id"      -> select params (sameInt docs documentId)
+        "search"  -> select params (filter (\doc -> map toLower value `isInfixOf` map toLower (documentName doc)) docs)
 
         -- скiпаємо будь-які незнані ключі
         _        -> select params docs

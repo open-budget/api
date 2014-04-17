@@ -131,11 +131,12 @@ select _  []   = []
 select ((key',value'):params) expenses =
 
     case key of
-        "area"   -> select params (sameInt expenses expenseAreaId)
-        "year"   -> select params (sameInt expenses expenseYear)
-        "id"     -> select params (filter (\e -> value == expenseId e) expenses)
-        "code"   -> select params (filter (\e -> value == code e) expenses)
-        "search" -> select params (filter (\e -> map toLower value `isInfixOf` map toLower (codeName e)) expenses)
+        "area_id"     -> select params (sameInt expenses expenseAreaId)
+        "year"        -> select params (sameInt expenses expenseYear)
+        "document_id" -> select params (sameInt expenses expenseDocumentId)
+        "id"          -> select params (filter (\e -> value == expenseId e) expenses)
+        "code"        -> select params (filter (\e -> value == code e) expenses)
+        "search"      -> select params (filter (\e -> map toLower value `isInfixOf` map toLower (codeName e)) expenses)
 
         -- скiпаємо будь-які незнані ключі
         _        -> select params expenses

@@ -10,6 +10,7 @@
     <link href='http://fonts.googleapis.com/css?family=Ubuntu+Mono&subset=cyrillic-ext,latin' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="http://raw.githubusercontent.com/necolas/normalize.css/master/normalize.css">
     <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+
     <style>
         body, html {
             min-height: 100%;
@@ -76,7 +77,7 @@
 
         .documentation-body section {
             border-bottom: 1px solid #fff;
-            padding-bottom: 15px;
+            padding-bottom: 30px;
         }
 
         .documentation-body section:last-of-type {
@@ -109,7 +110,7 @@
         }
 
         .documentation-body p.part {
-            margin: 30px 0 20px 0;
+            margin: 40px 0 30px 0;
         }
 
         .documentation-body code {
@@ -125,14 +126,15 @@
         }
 
         .documentation-body td.key {
-            min-width: 160px;
+            width: 200px;
         }
 
         .documentation-body td {
             border-top-color: #e2c001 !important;
         }
 
-        .documentation-body td.value {
+        .documentation-body td.value,
+        .documentation-body td.descr {
             font-size: .9em;
         }
 
@@ -184,6 +186,7 @@
              font-weight: 100;
              color: #ccc;
              margin-top: 20px;
+             margin-bottom: 30px;
         }
 
         #sample-result .query {
@@ -200,6 +203,8 @@
             border: none;
             border-top: 1px solid #666;
             border-radius: 0;
+            padding-top: 20px;
+            width: 1300px;
         }
 
         #sample-result #close-cross {
@@ -212,31 +217,83 @@
             color: #ccc;
         }
 
-        .sample-code-note {
+        .example-trigger {}
+
+        .example-trigger .example-display-link {
+            cursor: pointer;
+            margin: 20px 0 0 0;
+        }
+
+        .example-trigger .example-display-link:hover * {
+            color: #fff;
+        }
+
+        .example-trigger .example-display-link .zoom {
+            margin: 0;
+            border: 0;
+            text-align: right;
+        }
+
+        .example-trigger .example-display-link .zoom svg {
+            width: 30px;
+            height: 30px;
+            margin: 3px 0 0 0;
+        }
+
+        .example-trigger .example-display-link .zoom svg * {
+            stroke: #333;
+        }
+
+        .example-trigger .example-display-link:hover .zoom svg * {
+            stroke: #fff;
+        }
+
+        .example-trigger .example-display-link .sample-code-note {
             color: #444;
             display: block;
             font-size: .8em;
-            margin: 3px 0 0 43px
+            margin: 3px 0 0 4px;
         }
 
-        .example-trigger {
-            cursor: pointer;
+        .example-trigger .example-display-link:hover .sample-code-note {
+            color: #fff;
         }
     </style>
     <script>
         window.onload = function(){
 
-            // закриття прикладу запиту
+            // query example closing
             document.getElementById("close-cross").onclick = function(){
                 document.getElementById("sample-result").style.display = "none";
             };
 
-            // встановлення обробки кліків
-            var resultTriggers = document.getElementsByClassName("showExampleResult");
+            // click handling
+            var resultTriggers = document.getElementsByClassName("example-display-link");
             for (var i = resultTriggers.length - 1; i >= 0; i--) {
                 resultTriggers[i].onclick = function () {
+
+                    // opening window
                     document.getElementById("sample-result").style.display = "block";
-                    console.log(this);
+
+                    // loading json
+                    var host    = "http://localhost:3000"
+                        address = this.querySelector("code").innerHTML,
+                        parser  = document.createElement("a");
+
+                    // parsing url
+                    parser.href = address;
+
+                    // making request
+                    var r = new XMLHttpRequest();
+                    r.open("GET", host + parser.pathname + "" + parser.search, true);
+                    r.onreadystatechange = function(){
+                        if (r.readyState !== 4 || r.status !== 200) return;
+
+                        // putting json in wrapper
+                        document.querySelector("#sample-result pre").innerHTML = JSON.stringify(JSON.parse(r.responseText), null, "    ");
+                    }
+
+                    r.send(null);
                 }
             };
         };
@@ -246,11 +303,9 @@
     <div id="sample-result">
         <div class="col-md-10 col-md-offset-1">
             <h4>Приклад результату запиту</h4>
-            <div class="query">
-                <span class="label label-default">GET</span> http://api.open-budget.org/v1/areas.json
+            <div style="overflow: auto">
+                <pre>Хм, шось трапилось...</pre>
             </div>
-            <pre><script>document.write(JSON.stringify( [{"id":0,"name":"Україна"},{"id":1,"name":"Вінницька область"},{"id":2,"name":"Волинська область"},{"id":3,"name":"Дніпропетровська область"},{"id":4,"name":"Донецька область"}], null, '\t' ))</script>
-            </pre>
         </div>
         <div class="col-md-1">
             <div id="close-cross">✕</div>
@@ -285,148 +340,7 @@
                         <h3>Введення</h3>
 
                         <p>
-                            Концертний ринок України, як і багато які інші ринки, продовжує терпіти кризу. Британська пост-панк команда White Lies не добереться до Києва цієї весни "з технічних причин", повідомляють організатори. Концерт мав відбутись 17 травня в клубі Sentrum.
-                        </p>
-                    </section>
-
-                    <section class="api" id="expenses">
-                        <div class="icon">
-                            <svg enable-background="new 0 0 50 50" id="expenses" version="1.1" viewBox="0 0 50 50" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                                <polyline fill="none" points="17,10 25,2 33,10   " stroke="#fff" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>
-                                <line fill="none" stroke="#fff" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" x1="25" x2="25" y1="32" y2="2.333"/>
-                                <rect fill="none" height="50" width="50"/><path d="M17,17H8v32h34V17h-9" fill="none" stroke="#fff" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>
-                            </svg>
-                        </div>
-                        <h3>Витрати</h3>
-                        <div class="subtitle">
-                            Timelines are collections of Tweets, ordered with the most recent first.
-                        </div>
-
-                        <p class="part">
-                            <h4>Адреса ресурсу</h4>
-                            <span class="label label-default">GET</span>
-                            <code>https://api.open-budget.net/v1/expenses.json</code>
-                        </p>
-
-                        <p class="part">
-                            <h4>Параметри запиту</h4>
-                            <table class="table">
-                                <tr>
-                                    <td class="key">
-                                        <strong>area_id</strong>
-                                        <span class="note">опціонально</span>
-                                    </td>
-                                    <td class="value">
-                                        Вказує на регіон, по котрому потрібно зробити виборку. 0 &mdash; Україна, 1-24 &mdash; області. <br />Докладніше про регіони дивіться <a href="#areas">тут</a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <strong>year</strong>
-                                        <span class="note">опціонально</span>
-                                    </td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <strong>document_id</strong>
-                                        <span class="note">опціонально</span>
-                                    </td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <strong>code</strong>
-                                        <span class="note">опціонально</span>
-                                    </td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <strong>limit</strong>
-                                        <span class="note">опціонально</span>
-                                    </td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <strong>skip</strong>
-                                        <span class="note">опціонально</span>
-                                    </td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <strong>search_query</strong>
-                                        <span class="note">опціонально</span>
-                                    </td>
-                                    <td></td>
-                                </tr>
-                            </table>
-                        </p>
-
-                        <p class="part">
-                            <div class="example-trigger">
-                                <h4>Приклад запиту</h4>
-                                <span class="label label-default">GET</span>
-                                <code class="showExampleResult">
-                                    https://api.open-budget.net/v1/expenses.json?area_id=12&year=2014
-                                </code>
-
-                                <span class="sample-code-note">
-                                    (Натисніть для того щоб подивитись результат запиту)
-                                </span>
-                            </div>
-                        </p>
-                    </section>
-
-                    <section class="api" id="documents">
-                        <div class="icon">
-                            <svg enable-background="new 0 0 50 50" id="documents-icon" version="1.1" viewBox="0 0 50 50" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                                <polyline fill="none" points="29,21 18,21 18,10" stroke="#fff" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>
-                                <polygon fill="none" points="30,49 1,49 1,9   18,9 30,21" stroke="#fff" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>
-                                <polyline fill="none" points="48,13 37,13 37,2" stroke="#fff" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>
-                                <polygon points="37.414,0 19,0 19,6 21,8 21,2 36.586,2 48,13.414 48,40 33,40 33,42 50,42 50,12.586 " stroke="#fff"  stroke-width="2"/>
-                            </svg>
-                        </div>
-                        <h3>Документи</h3>
-                        <div class="subtitle">
-                            Timelines are collections of Tweets, ordered with the most recent first.
-                        </div>
-
-                        <p class="part">
-                            <h4>Адреса ресурсу</h4>
-                            <span class="label label-default">GET</span>
-                            <code>https://api.open-budget.net/v1/documents</code>
-                        </p>
-
-                        <p class="part">
-                            <h4>Параметри запиту</h4>
-                            <table class="table">
-                                <tr>
-                                    <td class="key">
-                                        <strong>area_id</strong>
-                                        <span class="note">опціонально</span>
-                                    </td>
-                                    <td class="value">
-                                        Вказує на регіон, по котрому потрібно зробити виборку. 0 &mdash; Україна, 1-24 &mdash; області. <br />Докладніше про регіони дивіться <a href="#areas">тут</a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <strong>document_id</strong>
-                                        <span class="note">опціонально</span>
-                                    </td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <strong>search_query</strong>
-                                        <span class="note">опціонально</span>
-                                    </td>
-                                    <td></td>
-                                </tr>
-                            </table>
+                            Проект &laquo;Відкритий бюджет&raquo; надає вимогу розробникам використовувати власну базу даних задля можливості їївикористання при розробці власних додатків. Окрім того, ми самі використовує мо цю модель доступу до зібраних та стандартизрованих нами даних. Інтерфейс доступу використовує модель Representational state transfer (REST). Подробиці та деталі доступу до окремих ресурсів ви знайдете нижче.
                         </p>
                     </section>
 
@@ -449,7 +363,77 @@
                         <p class="part">
                             <h4>Адреса ресурсу</h4>
                             <span class="label label-default">GET</span>
-                            <code>https://api.open-budget.net/v1/areas</code>
+                            <code>https://api.open-budget.org/v1/areas</code>
+                        </p>
+
+                        <p class="part">
+                            <h4>Параметри запиту</h4>
+                            <table class="table">
+                                <tr>
+                                    <td class="key">
+                                        <strong>id</strong>
+                                        <span class="note">опціонально</span>
+                                    </td>
+                                    <td class="value">
+                                        Унікальний ідентифікатор регіону.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="key">
+                                        <strong>search_query</strong>
+                                        <span class="note">опціонально</span>
+                                    </td>
+                                    <td class="value">
+                                        Пошук входження значення параметру у назву регіону
+                                    </td>
+                                </tr>
+                            </table>
+                        </p>
+
+                        <p class="part">
+                            <div class="example-trigger">
+                                <h4>Приклад запиту</h4>
+
+                                <div class="row example-display-link">
+                                    <div class="col-md-1 zoom">
+                                        <svg enable-background="new 0 0 50 50" id="zoom" version="1.1" viewBox="0 0 50 50" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                                            <circle cx="21" cy="20" fill="none" r="16" stroke="#000000" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>
+                                            <line fill="none" stroke="#000000" stroke-miterlimit="10" stroke-width="4" x1="32.229" x2="45.5" y1="32.229" y2="45.5"/>
+                                        </svg>
+                                    </div>
+                                    <div class="col-md-11">
+
+                                        <code>
+                                            https://api.open-budget.org/v1/areas.json?search=льв
+                                        </code>
+
+                                        <span class="sample-code-note">
+                                            (Натисніть для того щоб подивитись результат запиту)
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </p><!-- Приклад запиту -->
+                    </section>
+
+                    <section class="api" id="documents">
+                        <div class="icon">
+                            <svg enable-background="new 0 0 50 50" id="documents-icon" version="1.1" viewBox="0 0 50 50" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                                <polyline fill="none" points="29,21 18,21 18,10" stroke="#fff" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>
+                                <polygon fill="none" points="30,49 1,49 1,9   18,9 30,21" stroke="#fff" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>
+                                <polyline fill="none" points="48,13 37,13 37,2" stroke="#fff" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>
+                                <polygon points="37.414,0 19,0 19,6 21,8 21,2 36.586,2 48,13.414 48,40 33,40 33,42 50,42 50,12.586 " stroke="#fff"  stroke-width="2"/>
+                            </svg>
+                        </div>
+                        <h3>Документи</h3>
+                        <div class="subtitle">
+                            Timelines are collections of Tweets, ordered with the most recent first.
+                        </div>
+
+                        <p class="part">
+                            <h4>Адреса ресурсу</h4>
+                            <span class="label label-default">GET</span>
+                            <code>https://api.open-budget.org/v1/documents</code>
                         </p>
 
                         <p class="part">
@@ -466,13 +450,154 @@
                                 </tr>
                                 <tr>
                                     <td>
+                                        <strong>document_id</strong>
+                                        <span class="note">опціонально</span>
+                                    </td>
+                                    <td class="descr">
+                                        Унікальний ідентифікатор документу
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
                                         <strong>search_query</strong>
                                         <span class="note">опціонально</span>
                                     </td>
-                                    <td></td>
+                                    <td class="descr">
+                                        Пошук входження значення параметру у назву документу
+                                    </td>
                                 </tr>
                             </table>
                         </p>
+
+                        <p class="part">
+                            <div class="example-trigger">
+                                <h4>Приклад запиту</h4>
+
+                                <div class="row example-display-link">
+                                    <div class="col-md-1 zoom">
+                                        <svg enable-background="new 0 0 50 50" id="zoom" version="1.1" viewBox="0 0 50 50" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                                            <circle cx="21" cy="20" fill="none" r="16" stroke="#000000" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>
+                                            <line fill="none" stroke="#000000" stroke-miterlimit="10" stroke-width="4" x1="32.229" x2="45.5" y1="32.229" y2="45.5"/>
+                                        </svg>
+                                    </div>
+                                    <div class="col-md-11">
+
+                                        <code>
+                                            https://api.open-budget.org/v1/documents.json?area_id=1&year=2014
+                                        </code>
+
+                                        <span class="sample-code-note">
+                                            (Натисніть для того щоб подивитись результат запиту)
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </p><!-- Приклад запиту -->
+                    </section>
+
+                    <section class="api" id="expenses">
+                        <div class="icon">
+                            <svg enable-background="new 0 0 50 50" id="expenses" version="1.1" viewBox="0 0 50 50" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                                <polyline fill="none" points="17,10 25,2 33,10   " stroke="#fff" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>
+                                <line fill="none" stroke="#fff" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" x1="25" x2="25" y1="32" y2="2.333"/>
+                                <rect fill="none" height="50" width="50"/><path d="M17,17H8v32h34V17h-9" fill="none" stroke="#fff" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>
+                            </svg>
+                        </div>
+                        <h3>Витрати</h3>
+                        <div class="subtitle">
+                            Статті витрат державного та обласних бюджетів, зґруповані за регіонами та роками
+                        </div>
+
+                        <p class="part">
+                            <h4>Адреса ресурсу</h4>
+                            <span class="label label-default">GET</span>
+                            <code>https://api.open-budget.org/v1/expenses.json</code>
+                        </p>
+
+                        <p class="part">
+                            <h4>Параметри запиту</h4>
+                            <table class="table">
+                                <tr>
+                                    <td class="key">
+                                        <strong>area_id</strong>
+                                        <span class="note">опціонально</span>
+                                    </td>
+                                    <td class="descr">
+                                        Вказує на ідентифікатор регіону, по котрому потрібно зробити виборку. 0 &mdash; Україна, 1-24 &mdash; області. <br />Докладніше про регіони дивіться <a href="#areas">тут</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="key">
+                                        <strong>year</strong>
+                                        <span class="note">опціонально</span>
+                                    </td>
+                                    <td class="descr">
+                                        Рік, на котрий запланована певна стаття видатків
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="key">
+                                        <strong>document_id</strong>
+                                        <span class="note">опціонально</span>
+                                    </td>
+                                    <td class="descr">
+                                        Ідентифікатор документу, в котрому задекларована певна стаття видатків. <br> Докладніше про документи дивіться <a href="#documents">тут</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="key">
+                                        <strong>code</strong>
+                                        <span class="note">опціонально</span>
+                                    </td>
+                                    <td class="descr">
+                                        Код статті видатків за тимчасовою класифікацією
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="key">
+                                        <strong>id</strong>
+                                        <span class="note">опціонально</span>
+                                    </td>
+                                    <td class="descr">
+                                        Унікальний ідентифікатор статті видатків. Будується з року, на котрій запланована стаття видатків, ідентифікатору регіону та коду статті за тимчасовою класифікацією. Наприклад: стаття з кодом ТКВ № 091206, запланована на 2014 рік у обласному бюджеті Вінницької області буде мати унікальний ідетнифікатор <b>2014-1-91206</b>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="key">
+                                        <strong>search</strong>
+                                        <span class="note">опціонально</span>
+                                    </td>
+                                    <td class="descr">
+                                        Пошук входження значення параметру у назву статті витрат
+                                    </td>
+                                </tr>
+                            </table>
+                        </p>
+
+                        <p class="part">
+                            <div class="example-trigger">
+                                <h4>Приклад запиту</h4>
+
+                                <div class="row example-display-link">
+                                    <div class="col-md-1 zoom">
+                                        <svg enable-background="new 0 0 50 50" id="zoom" version="1.1" viewBox="0 0 50 50" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                                            <circle cx="21" cy="20" fill="none" r="16" stroke="#000000" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>
+                                            <line fill="none" stroke="#000000" stroke-miterlimit="10" stroke-width="4" x1="32.229" x2="45.5" y1="32.229" y2="45.5"/>
+                                        </svg>
+                                    </div>
+                                    <div class="col-md-11">
+
+                                        <code>
+                                            https://api.open-budget.org/v1/expenses.json?area_id=1&year=2014&search=Державне+управління
+                                        </code>
+
+                                        <span class="sample-code-note">
+                                            (Натисніть для того щоб подивитись результат запиту)
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </p><!-- Приклад запиту -->
                     </section>
                 </div>
             </div>
