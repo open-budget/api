@@ -3,8 +3,8 @@
 module OpenBudget.Types.Document where
 
 import           Data.Aeson     (ToJSON, object, toJSON, (.=))
-import           Data.Char      (isDigit)
-import           Data.List      (isPrefixOf)
+import           Data.Char      (isDigit, toLower)
+import           Data.List      (isInfixOf)
 import           Data.Text.Lazy (unpack)
 import qualified Text.CSV       as CSV
 import           Web.Scotty     (Param)
@@ -60,7 +60,7 @@ select ((key',value'):params) docs =
         "area"   -> select params (sameInt docs documentArea)
         "year"   -> select params (sameInt docs documentYear)
         "id"     -> select params (sameInt docs documentId)
-        "search" -> select params (filter (\doc -> value `isPrefixOf` documentName doc) docs)
+        "search" -> select params (filter (\doc -> map toLower value `isInfixOf` map toLower (documentName doc)) docs)
 
         -- скiпаємо будь-які незнані ключі
         _        -> select params docs
