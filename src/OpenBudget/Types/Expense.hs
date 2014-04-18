@@ -101,40 +101,25 @@ fromCSV (c:cn:gft:gfw:gfu:sft:ct:cw:cu:dt:db:ce:t:[])
 fromCSV _ = Nothing
 
 
--- | Оновлення унікального ідентифікатора статті витрат, побудованого з
---   року прийняття, коду регіону та коду статті витрат
-updateItemId :: Expense -> Expense
-updateItemId si = si { expenseId = code' }
-    where [y, a, c] = fmap show [ expenseYear si, expenseAreaId si, read (code si) :: Int]
-          code' = y ++ "-" ++ a ++ "-" ++ c
-
-
--- | Оновлення внутрішнього коду регіону у створеній статті витрат
-updateAreaId :: Int     -- ^ новий код регіону
-             -> Expense -- ^ стаття розходів для оновлення
-             -> Expense -- ^ оновлена стаття розходів
-updateAreaId aid si = si { expenseAreaId=aid }
-
-
--- | Оновлення ідентифікатора документу у створенній статті розходів
-updateDocumentId :: Int     -- ^ новий ідентифікатор документу
-                 -> Expense -- ^ стаття розходів для оновлення
-                 -> Expense -- ^ оновлена стаття розходів
-updateDocumentId did si = si { expenseDocumentId=did }
-
-
--- | Оновлення звітного періоду у створенній статті розходів
-updateYear :: Int     -- ^ новий ідентифікатор документу
-           -> Expense -- ^ стаття розходів для оновлення
-           -> Expense -- ^ оновлена стаття розходів
-updateYear y si = si { expenseYear=y }
-
-
 -- | Прив'язка статті витрат до конкретного документу та оновлення регіону та періоду
 linkToDocument :: Document -- ^ документ, до якого буде прив'язана стаття розходів
                -> Expense  -- ^ первинна стаття розходів
                -> Expense  -- ^ прив'язана стаття розходів
 linkToDocument doc = updateItemId . updateYear (documentYear doc) . updateDocumentId (documentId doc) . updateAreaId (documentArea doc)
+    where
+          -- оновлення звітного періоду у створенній статті розходів
+          updateYear y si         = si { expenseYear=y }
+
+          -- оновлення ідентифікатора документу у створенній статті розходів
+          updateDocumentId did si = si { expenseDocumentId=did }
+
+          -- оновлення внутрішнього коду регіону у створеній статті витрат
+          updateAreaId aid si     = si { expenseAreaId=aid }
+
+          -- оновлення унікального ідентифікатора статті витрат, побудованого з
+          updateItemId si         = si { expenseId = code' }
+              where [y', a, c] = fmap show [ expenseYear si, expenseAreaId si, read (code si) :: Int]
+                    code' = y' ++ "-" ++ a ++ "-" ++ c
 
 
 -- | Створення виборки серед видатків по заданим параметрам. Параметри беруться
