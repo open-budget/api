@@ -108,16 +108,16 @@ linkToDocument :: Document -- ^ документ, до якого буде пр�
 linkToDocument doc = updateItemId . updateYear (documentYear doc) . updateDocumentId (documentId doc) . updateAreaId (documentArea doc)
     where
           -- оновлення звітного періоду у створенній статті розходів
-          updateYear y si         = si { expenseYear=y }
+          updateYear y si = si { expenseYear=y }
 
           -- оновлення ідентифікатора документу у створенній статті розходів
           updateDocumentId did si = si { expenseDocumentId=did }
 
           -- оновлення внутрішнього коду регіону у створеній статті витрат
-          updateAreaId aid si     = si { expenseAreaId=aid }
+          updateAreaId aid si = si { expenseAreaId=aid }
 
           -- оновлення унікального ідентифікатора статті витрат, побудованого з
-          updateItemId si         = si { expenseId = code' }
+          updateItemId si = si { expenseId = code' }
               where [y', a, c] = fmap show [ expenseYear si, expenseAreaId si, read (code si) :: Int]
                     code' = y' ++ "-" ++ a ++ "-" ++ c
 
@@ -131,18 +131,20 @@ select :: [Param]   -- ^ перелік кортежів параметрів з
 select [] expenses = expenses
 select _  []       = []
 select ((key',value'):params) expenses =
-    case key of
-        "area_id"     -> select params (sameInt expenses expenseAreaId)
-        "year"        -> select params (sameInt expenses expenseYear)
-        "document_id" -> select params (sameInt expenses expenseDocumentId)
-        "id"          -> select params (filter (\e -> value == expenseId e) expenses)
-        "search"      -> select params (filter (\e -> map toLower value `isInfixOf` map toLower (codeName e)) expenses)
-        "code"        -> select params $
-                             if "," `isInfixOf` value
-                                 -- обробляємо перелік значень
-                                 then filter (\e -> [read (code e) :: Int] `isInfixOf` valueList) expenses
-                                 else filter (\e -> value == code e) expenses
-        _             -> select params expenses -- скiпаємо будь-які незнані ключі
+    let filtered = case key of
+                       "area_id"     -> sameInt expenses expenseAreaId
+                       "year"        -> sameInt expenses expenseYear
+                       "document_id" -> sameInt expenses expenseDocumentId
+                       "id"          -> filter (\e -> value == expenseId e) expenses
+                       "search"      -> filter (\e -> map toLower value `isInfixOf` map toLower (codeName e)) expenses
+                       "code"        -> if "," `isInfixOf` value
+                                            -- обробляємо перелік значень
+                                            then filter (\e -> [read (code e) :: Int] `isInfixOf` valueList) expenses
+                                            else filter (\e -> value == code e) expenses
+                       _             -> expenses -- скiпаємо будь-які незнані ключі
+
+    -- продовжуємо пошук у вже відфильтрованих результатах
+    in select params filtered
 
         where sameInt exps field =
                   -- в разі передачі списку значень замість одного, шукаємо

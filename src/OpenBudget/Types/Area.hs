@@ -42,15 +42,17 @@ select :: [Param] -- ^ перелік кортежів параметрів за
 select [] areas = areas
 select _  []    = []
 select ((key',value'):params) areas =
-    case key of
-        "search" -> select params (filter (\a -> map toLower value `isInfixOf` map toLower (areaName a)) areas)
-        "id"     -> select params $
-                        -- в разі передачі списку значень замість одного, шукаємо
-                        -- співпадіння кожного з введеного переліку
-                        if "," `isInfixOf` value
-                            then filter (\a -> [areaId a] `isInfixOf` valueList) areas
-                            else filter (\a -> (read value :: Int) == areaId a) areas
-        _        -> select params areas -- скiпаємо будь-які незнані ключі
+    let filtered = case key of
+                       "search" -> filter (\a -> map toLower value `isInfixOf` map toLower (areaName a)) areas
+                       "id"     -> -- в разі передачі списку значень замість одного, шукаємо
+                                   -- співпадіння кожного з введеного переліку
+                                   if "," `isInfixOf` value
+                                       then filter (\a -> [areaId a] `isInfixOf` valueList) areas
+                                       else filter (\a -> (read value :: Int) == areaId a) areas
+                       _        -> areas -- скiпаємо будь-які незнані ключі
+
+    -- продовжуємо пошук у вже відфильтрованих результатах
+    in select params filtered
 
         where valueList = read ("[" ++ value ++ "]") :: [Int]
               (key, value) = (unpack key', unpack value')

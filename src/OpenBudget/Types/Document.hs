@@ -55,12 +55,15 @@ select :: [Param]    -- ^ перелік кортежів параметрів �
 select [] docs = docs
 select _  []   = []
 select ((key',value'):params) docs =
-    case key of
-        "area_id" -> select params (sameInt docs documentArea)
-        "year"    -> select params (sameInt docs documentYear)
-        "id"      -> select params (sameInt docs documentId)
-        "search"  -> select params (filter (\doc -> map toLower value `isInfixOf` map toLower (documentName doc)) docs)
-        _         -> select params docs -- скiпаємо будь-які незнані ключі
+    let filtered = case key of
+                       "area_id" -> sameInt docs documentArea
+                       "year"    -> sameInt docs documentYear
+                       "id"      -> sameInt docs documentId
+                       "search"  -> filter (\doc -> map toLower value `isInfixOf` map toLower (documentName doc)) docs
+                       _         -> docs -- скiпаємо будь-які незнані ключі
+
+    -- продовжуємо пошук у вже відфильтрованих результатах
+    in select params filtered
 
         where sameInt docs' field =
                 -- в разі передачі списку значень замість одного, шукаємо
