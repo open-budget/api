@@ -6,8 +6,8 @@
 
     <title>Відкритий бюджет REST API</title>
 
-    <link href='//fonts.googleapis.com/css?family=Ubuntu&subset=cyrillic-ext,latin' rel='stylesheet' type='text/css'>
-    <link href='//fonts.googleapis.com/css?family=Ubuntu+Mono&subset=cyrillic-ext,latin' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Ubuntu&subset=cyrillic-ext,latin">
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Ubuntu+Mono&subset=cyrillic-ext,latin">
     <link rel="stylesheet" href="//raw.githubusercontent.com/necolas/normalize.css/master/normalize.css">
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
 
@@ -21,10 +21,55 @@
             color: #333;
         }
 
+        /* -- nav -- */
+
+        nav.navbar {
+            background: #fff;
+            border-radius: 0;
+            border-bottom: 1px solid #eee;
+            position: fixed;
+            width: 100%;
+            z-index:100;
+        }
+
+        nav.navbar li,
+        nav.navbar li a {
+            height: auto !important;
+            padding: 0;
+            margin: 0;
+        }
+
+        nav.navbar li a {
+            padding: 2px 12px;
+            border-radius: 30px;
+            margin-top: 10px;
+            margin-left: 5px;
+        }
+
+        nav.navbar li a {
+            color: #333;
+            font-size: .8em;
+        }
+
+        nav.navbar li.active a,
+        nav.navbar li.active:hover a {
+            background: #fff !important;
+            border: 1px solid #ccc;
+            color: #999;
+            height: 30px;
+        }
+
+        nav.navbar li.active a {
+            cursor: default;
+        }
+
+        /* -- nav -- */
+
         #documentation {
             width: 90%;
             margin: 0 auto;
             padding-top: 40px;
+            padding-top: 90px;
         }
 
         #pig {
@@ -128,7 +173,8 @@
         .documentation-body code {
             background: none;
             color: #333;
-            font-family: "Ubuntu Mono", sans-serif;
+            font-family: Monaco, "Ubuntu Mono", sans-serif;
+            font-size: 12px;
         }
 
         span.note {
@@ -186,142 +232,99 @@
             border-bottom: none;
         }
 
-        #sample-result {
-            position: fixed;
-            display: none;
-            width: 60%;
-            height: 100%;
-            right: 0;
-            background: #333;
-            top: 0;
-            z-index: 100;
-            box-shadow: #333 0 0 30px;
+        /* -- query result -- */
+
+        .query-result {}
+
+        .query-result div.annotation {
+            position: absolute;
+            width: 108%;
+            border-bottom: 1px solid #ccc;
+            z-index: 99;
+            margin-left: 10%;
         }
 
-        #sample-result h4 {
-             font-family: "Ubuntu", sans-serif;
-             font-weight: 100;
-             color: #ccc;
-             margin-top: 20px;
-             margin-bottom: 30px;
+        .query-result div.annotation.title {
+            border-bottom: none;
+            font-weight: bold;
         }
 
-        #sample-result .query {
-            color: #ccc;
-            font-family: "Ubuntu Mono";
-            font-weight: 600;
-            margin: 20px 0 20px;
-        }
-
-        #sample-result pre {
-            background: none;
-            color: #ccc;
-            font-family: "Ubuntu Mono";
-            border: none;
-            border-top: 1px solid #666;
-            border-radius: 0;
-            padding-top: 20px;
-            overflow: hidden;
-        }
-
-        #sample-result #close-cross {
-            color: #fff;
-            margin-top: 20px;
-            cursor: pointer;
-        }
-
-        #sample-result #close-cross:hover {
-            color: #ccc;
-        }
-
-        .example-trigger {}
-
-        .example-trigger .example-display-link {
-            cursor: pointer;
-            margin: 20px 0 0 0;
-        }
-
-        .example-trigger .example-display-link:hover * {
-            color: #999;
-        }
-
-        .example-trigger .example-display-link .zoom {
-            margin: 0;
-            border: 0;
-            text-align: right;
-        }
-
-        .example-trigger .example-display-link .zoom svg {
-            width: 30px;
-            height: 30px;
-            margin: 3px 0 0 0;
-        }
-
-        .example-trigger .example-display-link .zoom svg * {
-            stroke: #333;
-        }
-
-        .example-trigger .example-display-link:hover .zoom svg * {
-            stroke: #999;
-        }
-
-        .example-trigger .example-display-link .sample-code-note {
-            color: #444;
-            display: block;
+        .query-result div.annotation span.text {
             font-size: .8em;
-            margin: 3px 0 0 4px;
+            color: #555;
+            background: #fff;
+            margin-top: -7px;
+            padding-right: 10px;
+            position: absolute;
         }
 
-        .example-trigger .example-display-link:hover .sample-code-note {
+        .query-result pre.address {
+            font-family: Monaco, "Ubuntu Mono", monospace;
+            font-size: .85em;
+            margin: 20px 0;
+            color: #aaa;
+            width: auto;
+            padding: 0;
+            background: #fff;
+            border: none;
+        }
+
+        .query-result pre.address span.kv {
+            color: #333;
+            background: #FFDD00;
+            padding: 2px 5px;
+            margin: 0 3px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        .query-result pre.example {
+            background: #fff;
+            border: 1px solid #eee;
             color: #999;
+            font-family: Monaco, "Ubuntu Mono", monospace;
+            font-size: .85em;
+            line-height: 1.6em;
+            position: relative;
+            z-index: 98;
         }
+
+        .query-result pre.example span.string { color: #3e822a }
+        .query-result pre.example span.number { color: orange }
+
+        /* -- query result -- */
+
     </style>
-    <script>
-        window.onload = function(){
-
-            // query example closing
-            document.getElementById("close-cross").onclick = function(){
-                document.getElementById("sample-result").style.display = "none";
-            };
-
-            // click handling
-            var resultTriggers = document.getElementsByClassName("example-display-link");
-            for (var i = resultTriggers.length - 1; i >= 0; i--) {
-                resultTriggers[i].onclick = function () {
-
-                    // opening window
-                    document.getElementById("sample-result").style.display = "block";
-
-                    // loading json
-                    var address = this.querySelector("code").innerHTML,
-                        r = new XMLHttpRequest();
-
-                    r.open("GET", address, true);
-                    r.onreadystatechange = function(){
-                        if (r.readyState !== 4 || r.status !== 200) return;
-
-                        // putting json in wrapper
-                        document.querySelector("#sample-result pre").innerHTML = JSON.stringify(JSON.parse(r.responseText), null, "    ");
-                    }
-
-                    r.send(null);
-                }
-            };
-        };
-    </script>
 </head>
-<body>
-    <div id="sample-result">
-        <div class="col-md-10 col-md-offset-1 col-sm-10 col-sm-offset-1">
-            <h4>Приклад результату запиту</h4>
-            <div style="overflow: auto">
-                <pre>Хм, шось трапилось...</pre>
+<body data-spy="scroll" data-target="#section-menu" data-offset="80">
+
+    <!-- section navigation -->
+
+    <nav class="navbar navbar-default" role="navigation">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#section-menu">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+            </div><!-- .navbar-header -->
+
+            <div class="collapse navbar-collapse" id="section-menu">
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="active"><a href="#intro">Введення</a></li>
+                    <li><a href="#areas">Регіони</a></li>
+                    <li><a href="#documents">Документи</a></li>
+                    <li><a href="#expenses">Витрати</a></li>
+                    <li><a href="#document-list">Нормативна база</a></li>
+                </ul>
             </div>
-        </div>
-        <div class="col-md-1 col-sm-1">
-            <div id="close-cross">✕</div>
-        </div>
-    </div>
+        </div><!-- .container-fluid -->
+    </nav>
+
+    <!-- section navigation -->
+
     <div id="documentation">
         <div class="container-fluid">
             <div class="row documentation-header">
@@ -332,7 +335,7 @@
                         <path d="M6.826,23.096c0,0-3.826-0.876-3.826-4.327c0-1.415,0.714-2.717,1.963-3.256" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2"/>
                     </svg>
                 </div>
-                <div class="col-md-10 col-sm-9 col-xs-9">
+                <div class="col-md-10 col-sm-9 col-xs-9" id="intro">
                     <div id="title">
                         Відкритий бюджет
                         <div class="subtitle">
@@ -356,6 +359,7 @@
                     </section>
 
                     <section class="api" id="areas">
+                        <span class="anchor" id="areas"></span>
                         <div class="icon hidden-sm hidden-xs">
                             <svg enable-background="new 0 0 50 50" height="50px" id="regions" version="1.1" viewBox="0 0 50 50" width="50px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                               <polyline fill="none" points="44,21 44,49 6,49   6,21 " stroke="#000000" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>
@@ -399,25 +403,42 @@
                         </p>
 
                         <p class="part">
-                            <div class="example-trigger hidden-xs">
-                                <h4>Приклад запиту</h4>
+                            <div class="hidden-xs">
+                                <h4>Результат запиту</h4>
 
-                                <div class="row example-display-link">
-                                    <div class="col-md-1 zoom hidden-xs col-sm-1">
-                                        <svg enable-background="new 0 0 50 50" id="zoom" version="1.1" viewBox="0 0 50 50" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                                            <circle cx="21" cy="20" fill="none" r="16" stroke="#000000" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>
-                                            <line fill="none" stroke="#000000" stroke-miterlimit="10" stroke-width="4" x1="32.229" x2="45.5" y1="32.229" y2="45.5"/>
-                                        </svg>
-                                    </div>
-                                    <div class="col-md-11 col-sm-11">
+                                <div class="query-result">
+                                    <pre class="address">
+https://api.open-budget.org/v1/areas.json?<span class="kv">id=0,1,2</span>
+                                    </pre>
 
-                                        <code>
-                                            https://api.open-budget.org/v1/areas.json?id=0,1,2,3
-                                        </code>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="annotation" style="margin-top: 58px;">
+                                                <span class="text">ідентифікатор регіону</span>
+                                            </div>
 
-                                        <span class="sample-code-note">
-                                            (Натисніть для того щоб подивитись результат запиту)
-                                        </span>
+                                            <div class="annotation" style="margin-top: 152px;">
+                                                <span class="text">назва регіону</span>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-8">
+                                            <pre class="example">
+[
+    {
+        <span class="string">"id"</span>:   <span class="number">0</span>,
+        <span class="string">"name"</span>: <span class="string">"Україна"</span>
+    },
+    {
+        <span class="string">"id"</span>:   <span class="number">1</span>,
+        <span class="string">"name"</span>: <span class="string">"Вінницька область"</span>
+    },
+    {
+        <span class="string">"id"</span>:   <span class="number">2</span>,
+        <span class="string">"name"</span>: <span class="string">"Волинська область"</span>
+    }
+]</pre>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -486,25 +507,59 @@
                         </p>
 
                         <p class="part">
-                            <div class="example-trigger hidden-xs">
-                                <h4>Приклад запиту</h4>
+                            <div class="hidden-xs">
+                                <h4>Результат запиту</h4>
 
-                                <div class="row example-display-link">
-                                    <div class="col-md-1 zoom hidden-xs col-sm-1">
-                                        <svg enable-background="new 0 0 50 50" id="zoom" version="1.1" viewBox="0 0 50 50" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                                            <circle cx="21" cy="20" fill="none" r="16" stroke="#000000" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>
-                                            <line fill="none" stroke="#000000" stroke-miterlimit="10" stroke-width="4" x1="32.229" x2="45.5" y1="32.229" y2="45.5"/>
-                                        </svg>
-                                    </div>
-                                    <div class="col-md-11 col-sm-11">
+                                <div class="query-result">
+                                    <pre class="address">
+https://api.open-budget.org/v1/documents.json?<span class="kv">year=2014</span>&<span class="kv">area_id=1</span>
+                                    </pre>
 
-                                        <code>
-                                            https://api.open-budget.org/v1/documents.json?area_id=1&year=2014
-                                        </code>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="annotation" style="margin-top: 58px;">
+                                                <span class="text">ідентифікатор регіону</span>
+                                            </div>
 
-                                        <span class="sample-code-note">
-                                            (Натисніть для того щоб подивитись результат запиту)
-                                        </span>
+                                            <div class="annotation" style="margin-top: 77px;">
+                                                <span class="text">додаткові дані</span>
+                                            </div>
+
+                                            <div class="annotation" style="margin-top: 96px;">
+                                                <span class="text">ідентифікатор документу</span>
+                                            </div>
+
+                                            <div class="annotation" style="margin-top: 115px;">
+                                                <span class="text">посилання на оригінал</span>
+                                            </div>
+
+                                            <div class="annotation" style="margin-top: 134px;">
+                                                <span class="text">назва</span>
+                                            </div>
+
+                                            <div class="annotation" style="margin-top: 151px;">
+                                                <span class="text">тип (витрати, прибутки)</span>
+                                            </div>
+
+                                            <div class="annotation" style="margin-top: 170px;">
+                                                <span class="text">рік</span>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-8">
+                                            <pre class="example">
+[
+    {
+        <span class="string">"area_id"</span>:     <span class="number">1</span>,
+        <span class="string">"description"</span>: <span class="string">"Додаток 2 до рішення 21 сесії обласної (...)"</span>,
+        <span class="string">"id"</span>:          <span class="number">1</span>,
+        <span class="string">"link"</span>:        <span class="string">"http://www.oda.ck.ua/docs/budget/bud2014.pdf"</span>,
+        <span class="string">"name"</span>:        <span class="string">"Видатки обласного бюджету на 2014 рік (...)"</span>,
+        <span class="string">"type"</span>:        <span class="string">"Expenses"</span>,
+        <span class="string">"year"</span>:        <span class="number">2014</span>
+    }
+]</pre>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -591,25 +646,134 @@
                         </p>
 
                         <p class="part">
-                            <div class="example-trigger hidden-xs">
-                                <h4>Приклад запиту</h4>
+                            <div class="hidden-xs">
+                                <h4>Результат запиту</h4>
 
-                                <div class="row example-display-link">
-                                    <div class="col-md-1 zoom hidden-xs col-sm-1">
-                                        <svg enable-background="new 0 0 50 50" id="zoom" version="1.1" viewBox="0 0 50 50" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                                            <circle cx="21" cy="20" fill="none" r="16" stroke="#000000" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>
-                                            <line fill="none" stroke="#000000" stroke-miterlimit="10" stroke-width="4" x1="32.229" x2="45.5" y1="32.229" y2="45.5"/>
-                                        </svg>
-                                    </div>
-                                    <div class="col-md-11 col-sm-11">
+                                <div class="query-result">
+                                    <pre class="address">
+https://api.open-budget.org/v1/expenses.json?<span class="kv">area_id=1</span>&<span class="kv">year=2014</span>&<span class="kv">search=спеціалізовані+заклади</span>
+                                    </pre>
 
-                                        <code>
-                                            https://api.open-budget.org/v1/expenses.json?area_id=1&year=2014&search=Державне+управління
-                                        </code>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="annotation" style="margin-top: 58px;">
+                                                <span class="text">унікальний ідентифікатор статті видатків</span>
+                                            </div>
 
-                                        <span class="sample-code-note">
-                                            (Натисніть для того щоб подивитись результат запиту)
-                                        </span>
+                                            <div class="annotation" style="margin-top: 96px;">
+                                                <span class="text">ідентифікатор регіону</span>
+                                            </div>
+
+                                            <div class="annotation" style="margin-top: 115px;">
+                                                <span class="text">ідентифікатор документу</span>
+                                            </div>
+
+                                            <div class="annotation" style="margin-top: 134px;">
+                                                <span class="text">рік</span>
+                                            </div>
+
+                                            <div class="annotation" style="margin-top: 170px;">
+                                                <span class="text">код ТКВ на кредитування місцевих бюджетів</span>
+                                            </div>
+
+                                            <div class="annotation" style="margin-top: 189px;">
+                                                <span class="text">найменування коду тимчасової класифікації</span>
+                                            </div>
+
+                                            <div class="annotation" style="margin-top: 208px;">
+                                                <span class="text">всього</span>
+                                            </div>
+
+                                            <div class="annotation title" style="margin-top: 246px;">
+                                                <span class="text">Видатки загального фонду</span>
+                                            </div>
+
+                                            <div class="annotation" style="margin-top: 265px;">
+                                                <span class="text">оплата праці</span><!-- general_fund_wages -->
+                                            </div>
+
+                                            <div class="annotation" style="margin-top: 284px;">
+                                                <span class="text">комунальні послуги та енергоносії</span>
+                                            </div>
+
+                                            <div class="annotation" style="margin-top: 303px;">
+                                                <span class="text">всього</span>
+                                            </div>
+
+                                            <div class="annotation title" style="margin-top: 341px;">
+                                                <span class="text">Видатки спеціального фонду</span>
+                                            </div>
+
+                                            <div class="annotation" style="margin-top: 360px;">
+                                                <span class="text">всього зі спеціального фонду</span>
+                                            </div>
+
+                                            <div class="annotation title" style="margin-top: 379px;">
+                                                <span class="text">Споживання</span>
+                                            </div>
+
+                                            <div class="annotation" style="margin-top: 398px;">
+                                                <span class="text">всього</span>
+                                            </div>
+
+                                            <div class="annotation" style="margin-top: 417px;">
+                                                <span class="text">комунальні послуги та енергоносії</span>
+                                            </div>
+
+                                            <div class="annotation" style="margin-top: 436px;">
+                                                <span class="text">оплата праці</span>
+                                            </div>
+
+                                            <div class="annotation title" style="margin-top: 455px;">
+                                                <span class="text">Розвитку</span>
+                                            </div>
+
+                                            <div class="annotation" style="margin-top: 474px;">
+                                                <span class="text">бюджет розвитку</span>
+                                            </div>
+
+                                            <div class="annotation" style="margin-top: 493px;">
+                                                <span class="text">капітальні видатки</span>
+                                            </div>
+
+                                            <div class="annotation" style="margin-top: 512px;">
+                                                <span class="text">всього</span>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-8">
+                                            <pre class="example">
+[
+    {
+        <span class="string">"id"</span>:                     <span class="string">"2014-1-80201"</span>,
+
+        <span class="string">"area_id"</span>:                <span class="number">1</span>,
+        <span class="string">"document_id"</span>:            <span class="number">1</span>,
+        <span class="string">"year"</span>:                   <span class="number">2014</span>,
+
+        <span class="string">"code"</span>:                   <span class="string">"080201"</span>,
+        <span class="string">"code_name"</span>:              <span class="string">"Спеціалізовані лікарні та інші (...)"</span>,
+        <span class="string">"total"</span>:                  <span class="number">285246.1</span>,
+
+
+        <span class="string">"general_fund_wages"</span>:     <span class="number">281071.5</span>,
+        <span class="string">"general_fund_utilities"</span>: <span class="number">38655.2</span>,
+        <span class="string">"general_fund_total"</span>:     <span class="number">145341.3</span>,
+
+
+        <span class="string">"special_fund_total"</span>:     <span class="number">4174.6</span>,
+
+        <span class="string">"consumption_total"</span>:      <span class="number">3986</span>,
+        <span class="string">"consumption_utilities"</span>:  <span class="number">527.3</span>,
+        <span class="string">"consumption_wages"</span>:      <span class="number">1117.85</span>,
+
+        <span class="string">"development_budget"</span>:     <span class="number">null</span>,
+        <span class="string">"capital_expenditures"</span>:   <span class="number">null</span>,
+        <span class="string">"development_total"</span>:      <span class="number">188.6</span>,
+    }
+]
+</pre>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -635,5 +799,33 @@
             </div>
         </div>
     </div>
+
+    <script src="//code.jquery.com/jquery-2.1.0.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-scrollTo/1.4.11/jquery.scrollTo.min.js"></script>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+
+    <script>
+        $(function(){
+            $("#section-menu a").click(function(){
+                return false;
+            });
+
+            var sections = ["intro", "areas", "documents", "expenses", "document-list"];
+
+            sections.forEach(function (section) {
+                $("a[href=#" + section + "]").click(function () {
+
+                    var off = $("#" + section).offset();
+                    $("body").scrollTo(off.top - 80, 0, {});
+
+                    var $t = $(this);
+                    setTimeout(function () {
+                        $t.parents("ul").find("li").removeClass("active");
+                        $t.parent("li").addClass("active");
+                    }, 10);
+                });
+            });
+        });
+    </script>
 </body>
 </html>

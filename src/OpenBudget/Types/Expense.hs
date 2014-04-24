@@ -57,7 +57,7 @@ instance ToJSON Expense where
         , "total"                  .= t
         , "general_fund_wages"     .= gfw
         , "general_fund_utilities" .= gfu
-        , "general_fund_tages"     .= gft
+        , "general_fund_total"     .= gft
         , "special_fund_total"     .= sft
         , "consumption_wages"      .= cw
         , "consumption_utilities"  .= cu
