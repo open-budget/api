@@ -53,6 +53,5 @@ select ((key',value'):params) areas =
 
     -- продовжуємо пошук у вже відфильтрованих результатах
     in select params filtered
-
         where valueList = read ("[" ++ value ++ "]") :: [Int]
               (key, value) = (unpack key', unpack value')

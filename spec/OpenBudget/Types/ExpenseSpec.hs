@@ -7,10 +7,7 @@ import           Text.CSV
 spec :: Spec
 spec =
     describe "fromCSV" $
-        it "повинно ігнорувати некорректний інпут" $ do
-            let rawCsv = ",0112,a,a,a,a"
-                Right _csv = parseCSV "" rawCsv
-
-            readFile "data/areas.csv" >>= print
-
+        it "повинно ігнорувати некорректний інпут" $
             fromCSV (head _csv) `shouldBe` Nothing
+            where rawCsv = ",0112,a,a,a,a"
+                  Right _csv = parseCSV "" rawCsv
