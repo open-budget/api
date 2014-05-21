@@ -8,7 +8,7 @@ import qualified OpenBudget.Types.Area      as Area (select)
 import           OpenBudget.Types.Database
 import qualified OpenBudget.Types.Document  as Document (select)
 import qualified OpenBudget.Types.Expense   as Expense (select)
-import           Paths_open_budget_database (getDataFileName)
+import           Paths_open_budget_api (getDataFileName)
 import           Web.Scotty
 
 main :: IO ()

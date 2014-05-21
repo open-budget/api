@@ -11,7 +11,7 @@ import           OpenBudget.Types.Document  hiding (fromCSV)
 import qualified OpenBudget.Types.Document  as Document (fromCSV)
 import           OpenBudget.Types.Expense   hiding (fromCSV)
 import qualified OpenBudget.Types.Expense   as Expense (fromCSV)
-import qualified Paths_open_budget_database as Paths
+import qualified Paths_open_budget_api      as Paths
 import           Text.CSV                   (Record, parseCSV)
 
 
