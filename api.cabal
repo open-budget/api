@@ -1,5 +1,5 @@
 
-name:                 open-budget-api
+name:                 api
 version:              0.0.1.0
 homepage:             https://github.com/open-budget/api
 bug-reports:          https://github.com/open-budget/api/issues
@@ -15,11 +15,10 @@ data-files:
     , data/documents/*.csv
     , resourses/index.html
 
-
 library
     hs-source-dirs:   src
     default-language: Haskell2010
-    other-modules:    Paths_open_budget_api
+    other-modules:    Paths_api
 
     exposed-modules:
         OpenBudget.Builder
@@ -39,7 +38,7 @@ library
         , utility-ht == 0.0.8
 
 
-executable open-budget-api
+executable api
     default-language: Haskell2010
     ghc-options:      -Wall -fwarn-tabs -threaded
     hs-source-dirs:   src-exec
@@ -49,9 +48,8 @@ executable open-budget-api
         base
         , aeson == 0.7.0.3
         , csv == 0.1.1
-        , open-budget-api
+        , api
         , scotty == 0.7.2
-
 
 test-suite test
     default-language: Haskell2010
@@ -65,4 +63,4 @@ test-suite test
         , csv == 0.1.1
         , hspec == 1.9.2
         , directory
-        , open-budget-api
+        , api
