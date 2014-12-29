@@ -25,15 +25,15 @@ main = do
         get "/" $
             file doc
 
-        get "/v1/areas.json" $ do
+        get "/areas" $ do
             params' <- params
             jsonUtf8 $ Area.select params' (areas db)
 
-        get "/v1/documents.json" $ do
+        get "/documents" $ do
             params' <- params
             jsonUtf8 $ Document.select params' (documents db)
 
-        get "/v1/expenses.json" $ do
+        get "/expenses" $ do
             params' <- params
             jsonUtf8 $ Expense.select params' (expenses db)
 
