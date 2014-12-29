@@ -19,7 +19,6 @@ data Document = Document
     , documentName        :: String  -- назва документу
     , documentDescription :: String  -- додаткові дані
     , documentLink        :: String  -- посилання на джерело документу
-    , documentFilename    :: String
     } deriving (Show, Read, Eq)
 
 
@@ -39,7 +38,7 @@ instance ToJSON Document where
 fromCSV :: CSV.Record     -- ^ результат парсингу CVS
         -> Maybe Document -- ^ можливий документ
 fromCSV (id':y:a:n:d:l:f:[])
-    | all isDigit id' = Just (Document (i id') (i y) (i a) n d l f)
+    | all isDigit id' = Just (Document (i id') (i y) (i a) n d l)
     | otherwise       = Nothing
     where i x = read x :: Int
 fromCSV _ = Nothing

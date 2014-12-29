@@ -2,18 +2,22 @@
 
 module Main where
 
-import           Data.Aeson                 (encode)
+import           Data.Aeson                (encode)
 import           OpenBudget.Builder
-import qualified OpenBudget.Types.Area      as Area (select)
+import qualified OpenBudget.Types.Area     as Area (select)
 import           OpenBudget.Types.Database
-import qualified OpenBudget.Types.Document  as Document (select)
-import qualified OpenBudget.Types.Expense   as Expense (select)
-import           Paths_api                  (getDataFileName)
+import qualified OpenBudget.Types.Document as Document (select)
+import qualified OpenBudget.Types.Expense  as Expense (select)
+import           Paths_api                 (getDataFileName)
 import           Web.Scotty
 
 main :: IO ()
 main = do
+
+    -- todo: перенести БД у IORef та оновляти кожного разу,
+    --       коли оновлюється директорія `data`
     db <- newDatabase
+
     doc <- getDataFileName "resourses/index.html"
 
     scotty 3000 $ do

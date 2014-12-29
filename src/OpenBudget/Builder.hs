@@ -33,11 +33,11 @@ getSmthn f preprocess = do
 
 
 getAreas :: IO [Area]
-getAreas = getSmthn "data/areas.csv" Area.fromCSV
+getAreas = getSmthn "data/areas/index.csv" Area.fromCSV
 
 
 getDocuments :: IO [Document]
-getDocuments = getSmthn "data/documents.csv" Document.fromCSV
+getDocuments = getSmthn "data/expenses/index.csv" Document.fromCSV
 
 
 getExpenses :: [Document] -> IO [Expense]
@@ -47,4 +47,4 @@ getExpenses docs =
         getExpensesFromDoc :: Document -> IO [Expense]
         getExpensesFromDoc doc =
             fmap (map (linkToDocument doc)) $ getSmthn docpath Expense.fromCSV
-                where docpath = "data/documents/" ++ documentFilename doc ++ ".csv"
+                where docpath = "data/expenses/" ++ show(documentId doc) ++ ".csv"
