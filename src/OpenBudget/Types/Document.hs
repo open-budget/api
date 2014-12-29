@@ -1,4 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE RecordWildCards #-}
 
 module OpenBudget.Types.Document where
 
@@ -18,29 +19,27 @@ data Document = Document
     , documentName        :: String  -- назва документу
     , documentDescription :: String  -- додаткові дані
     , documentLink        :: String  -- посилання на джерело документу
-    , documentType        :: String  -- тип документу
     , documentFilename    :: String
     } deriving (Show, Read, Eq)
 
 
 -- | Конвертування документу для представлення в веб api
 instance ToJSON Document where
-    toJSON (Document id_ year area name desc link type_ _) = object
-        [ "id"          .= id_
-        , "year"        .= year
-        , "area_id"     .= area
-        , "name"        .= name
-        , "description" .= desc
-        , "link"        .= link
-        , "type"        .= type_
+    toJSON Document{..} = object
+        [ "id"          .= documentId
+        , "year"        .= documentYear
+        , "area_id"     .= documentArea
+        , "name"        .= documentName
+        , "description" .= documentDescription
+        , "link"        .= documentLink
         ]
 
 
 -- | Конвертація результату парсингу CSV у внутрішнє представлення
 fromCSV :: CSV.Record     -- ^ результат парсингу CVS
         -> Maybe Document -- ^ можливий документ
-fromCSV (id':y:a:n:d:l:t:f:[])
-    | all isDigit id' = Just (Document (i id') (i y) (i a) n d l t f)
+fromCSV (id':y:a:n:d:l:f:[])
+    | all isDigit id' = Just (Document (i id') (i y) (i a) n d l f)
     | otherwise       = Nothing
     where i x = read x :: Int
 fromCSV _ = Nothing

@@ -1,4 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE RecordWildCards #-}
 
 module OpenBudget.Types.Area where
 
@@ -18,15 +19,15 @@ data Area = Area
 
 -- конвертування регіону для представлення в веб api
 instance ToJSON Area where
-    toJSON (Area id' name) = object
-        [ "id"   .= id'
-        , "name" .= name
+    toJSON Area{..} = object
+        [ "id"   .= areaId
+        , "name" .= areaName
         ]
 
 
 -- | Конвертація результату парсингу CSV у внутрішнє представлення
 fromCSV :: CSV.Record -- ^ результат парсингу CVS
-        -> Maybe Area -- ^ можлива стаття розходів
+        -> Maybe Area -- ^ можливий суб’єкт бюджетування
 fromCSV (id':name:[])
     | all isDigit id' = Just Area { areaId =  read id' :: Int, areaName = name }
     | otherwise       = Nothing

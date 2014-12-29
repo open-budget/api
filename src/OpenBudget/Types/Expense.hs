@@ -1,4 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE RecordWildCards #-}
 
 module OpenBudget.Types.Expense where
 
@@ -47,24 +48,24 @@ data Expense = Expense
 
 -- конвертування статті розходів для представлення в веб api
 instance ToJSON Expense where
-    toJSON (Expense eid eaid edid ey c cn t gfw gfu gft sft cw cu ct db ce dt) = object
-        [ "id"                     .= eid
-        , "area_id"                .= eaid
-        , "document_id"            .= edid
-        , "year"                   .= ey
-        , "code"                   .= c
-        , "code_name"              .= cn
-        , "total"                  .= t
-        , "general_fund_wages"     .= gfw
-        , "general_fund_utilities" .= gfu
-        , "general_fund_total"     .= gft
-        , "special_fund_total"     .= sft
-        , "consumption_wages"      .= cw
-        , "consumption_utilities"  .= cu
-        , "consumption_total"      .= ct
-        , "development_budget"     .= db
-        , "capital_expenditures"   .= ce
-        , "development_total"      .= dt
+    toJSON Expense{..} = object
+        [ "id"                     .= expenseId
+        , "area_id"                .= expenseAreaId
+        , "document_id"            .= expenseDocumentId
+        , "year"                   .= expenseYear
+        , "code"                   .= code
+        , "code_name"              .= codeName
+        , "total"                  .= total
+        , "general_fund_wages"     .= generalFundWages
+        , "general_fund_utilities" .= generalFundUtilities
+        , "general_fund_total"     .= generalFundTotal
+        , "special_fund_total"     .= specialFundTotal
+        , "consumption_wages"      .= consumptionWages
+        , "consumption_utilities"  .= consumptionUtilities
+        , "consumption_total"      .= consumptionTotal
+        , "development_budget"     .= developmentBudget
+        , "capital_expenditures"   .= capitalExpenditures
+        , "development_total"      .= developmentTotal
         ]
 
 
