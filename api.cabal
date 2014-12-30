@@ -28,7 +28,7 @@ library
         OpenBudget.Types.Expense
 
     build-depends:
-        base
+          base
         , aeson == 0.7.0.3
         , csv == 0.1.1
         , hspec == 1.9.2
@@ -44,11 +44,12 @@ executable api
     main-is:          Main.hs
 
     build-depends:
-        base
+          base
         , aeson == 0.7.0.3
         , csv == 0.1.1
         , api
         , scotty == 0.7.2
+        , containers == 0.5.5.1
 
 test-suite test
     default-language: Haskell2010
@@ -58,7 +59,7 @@ test-suite test
     type:             exitcode-stdio-1.0
 
     build-depends:
-        base
+          base
         , csv == 0.1.1
         , hspec == 1.9.2
         , directory

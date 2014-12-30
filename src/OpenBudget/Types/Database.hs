@@ -4,7 +4,6 @@ import           Data.Time (UTCTime)
 import           OpenBudget.Types.Area
 import           OpenBudget.Types.Document
 import           OpenBudget.Types.Expense
--- import OpenBudget.Types.Income
 
 data Database = Database
     { areas     :: [Area]

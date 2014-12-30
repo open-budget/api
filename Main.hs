@@ -10,6 +10,7 @@ import qualified OpenBudget.Types.Document as Document (select)
 import qualified OpenBudget.Types.Expense  as Expense (select)
 import           Paths_api                 (getDataFileName)
 import           Web.Scotty
+import qualified Data.Map as Map (Map, fromList)
 
 main :: IO ()
 main = do
@@ -36,6 +37,12 @@ main = do
         get "/expenses" $ do
             params' <- params
             jsonUtf8 $ Expense.select params' (expenses db)
+
+        get "/links" $
+            raw $ encode (Map.fromList [ ("areas",     "https://api.open-budget.org/areas")
+                                       , ("documents", "https://api.open-budget.org/areas")
+                                       , ("expenses",  "https://api.open-budget.org/expenses")
+                                       ] :: Map.Map String String)
 
         where jsonUtf8 xs = do
                 setHeader "Access-Control-Allow-Origin" "*"
