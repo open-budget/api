@@ -2,7 +2,9 @@
 
 module OpenBudget.Builder where
 
+import           Control.Applicative       ((<$>))
 import           Data.Maybe                (fromJust, isJust)
+import           Data.Maybe                (fromMaybe)
 import           Data.Time                 (getCurrentTime)
 import           OpenBudget.Types.Area     hiding (fromCSV)
 import qualified OpenBudget.Types.Area     as Area (fromCSV)
@@ -12,6 +14,7 @@ import qualified OpenBudget.Types.Document as Document (fromCSV)
 import           OpenBudget.Types.Expense  hiding (fromCSV)
 import qualified OpenBudget.Types.Expense  as Expense (fromCSV)
 import qualified Paths_api                 as Paths
+import           System.Environment        (lookupEnv)
 import           Text.CSV                  (Record, parseCSV)
 
 
@@ -26,18 +29,22 @@ newDatabase = do
 
 getSmthn :: FilePath -> (Record -> Maybe a) -> IO [a]
 getSmthn f preprocess = do
-    contents <- Paths.getDataFileName f >>= readFile
+    dataPath <- fromMaybe standardPath <$> lookupEnv standardEnvKey
+    contents <- Paths.getDataFileName (dataPath ++ "/" ++ f) >>= readFile
     case parseCSV f contents of
         Right _csv -> return $ map fromJust $ filter isJust $ map preprocess _csv
         Left _ -> return []
+    where
+        standardPath = "/usr/local/open-budget/data"
+        standardEnvKey = "API_DATA_PATH"
 
 
 getAreas :: IO [Area]
-getAreas = getSmthn "data/areas/index.csv" Area.fromCSV
+getAreas = getSmthn "areas/index.csv" Area.fromCSV
 
 
 getDocuments :: IO [Document]
-getDocuments = getSmthn "data/expenses/index.csv" Document.fromCSV
+getDocuments = getSmthn "expenses/index.csv" Document.fromCSV
 
 
 getExpenses :: [Document] -> IO [Expense]
@@ -48,4 +55,4 @@ getExpenses docs =
 getExpensesFromDoc :: Document -> IO [Expense]
 getExpensesFromDoc doc =
     fmap (map (linkToDocument doc)) $ getSmthn docpath Expense.fromCSV
-        where docpath = "data/expenses/" ++ show(documentId doc) ++ ".csv"
+        where docpath = "expenses/" ++ show(documentId doc) ++ ".csv"
