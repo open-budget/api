@@ -129,8 +129,8 @@ linkToDocument doc = updateItemId . updateYear (documentYear doc) . updateDocume
 select :: [Param]   -- ^ перелік кортежів параметрів запиту у вигляді (ключ, значення)
        -> [Expense] -- ^ первинний перелік видатків
        -> [Expense] -- ^ видатки, шо задовольняють введений параметрам запиту
-select [] expenses = expenses
-select _  []       = []
+select [] expenses                     = expenses
+select _  []                           = []
 select ((key',value'):params) expenses =
     let filtered = case key of
                        "area_id"     -> sameInt expenses expenseAreaId

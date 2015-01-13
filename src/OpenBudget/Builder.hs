@@ -3,8 +3,7 @@
 module OpenBudget.Builder where
 
 import           Control.Applicative       ((<$>))
-import           Data.Maybe                (fromJust, isJust)
-import           Data.Maybe                (fromMaybe)
+import           Data.Maybe                (fromJust, isJust, fromMaybe)
 import           Data.Time                 (getCurrentTime)
 import           OpenBudget.Types.Area     hiding (fromCSV)
 import qualified OpenBudget.Types.Area     as Area (fromCSV)
@@ -54,5 +53,5 @@ getExpenses docs =
 
 getExpensesFromDoc :: Document -> IO [Expense]
 getExpensesFromDoc doc =
-    fmap (map (linkToDocument doc)) $ getSmthn docpath Expense.fromCSV
+    map (linkToDocument doc) <$> getSmthn docpath Expense.fromCSV
         where docpath = "expenses/" ++ show(documentId doc) ++ ".csv"

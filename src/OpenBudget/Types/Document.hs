@@ -50,8 +50,8 @@ fromCSV _ = Nothing
 select :: [Param]    -- ^ перелік кортежів параметрів запиту у вигляді (ключ, значення)
        -> [Document] -- ^ первинний перелік документів
        -> [Document] -- ^ документи, шо задовольняють введений параметрам запиту
-select [] docs = docs
-select _  []   = []
+select [] docs                     = docs
+select _  []                       = []
 select ((key',value'):params) docs =
     let filtered = case key of
                        "area_id" -> sameInt docs documentArea

@@ -1,5 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE RecordWildCards #-}
+{-# LANGUAGE RecordWildCards   #-}
 
 module OpenBudget.Types.Area where
 
@@ -40,8 +40,8 @@ fromCSV _ = Nothing
 select :: [Param] -- ^ перелік кортежів параметрів запиту у вигляді (ключ, значення)
        -> [Area]  -- ^ первинний перелік регіонів
        -> [Area]  -- ^ регіони, шо задовольняють введений параметрам запиту
-select [] areas = areas
-select _  []    = []
+select [] areas                     = areas
+select _  []                        = []
 select ((key',value'):params) areas =
     let filtered = case key of
                        "search" -> filter (\a -> map toLower value `isInfixOf` map toLower (areaName a)) areas
