@@ -13,7 +13,7 @@ import           Web.Scotty     (Param)
 
 -- | Регіон (суб'єкт) бюджетування
 data Area = Area
-    { areaId   :: Int     -- внутрішній код регіону (0 - Україна, 1-24 - областi)
+    { areaId   :: String  -- внутрішній код регіону (0 - Україна, 1-24 - областi)
     , areaName :: String  -- назва регіону
     } deriving (Show, Read, Eq)
 
@@ -29,7 +29,7 @@ instance ToJSON Area where
 fromCSV :: CSV.Record -- ^ результат парсингу CVS
         -> Maybe Area -- ^ можливий суб’єкт бюджетування
 fromCSV (id':name:[])
-    | all isDigit id' = Just Area { areaId =  read id' :: Int, areaName = name }
+    | all isDigit id' = Just Area { areaId = id', areaName = name }
     | otherwise       = Nothing
 fromCSV _ = Nothing
 
@@ -49,10 +49,10 @@ select ((key',value'):params) areas =
                                    -- співпадіння кожного з введеного переліку
                                    if "," `isInfixOf` value
                                        then filter (\a -> [areaId a] `isInfixOf` valueList) areas
-                                       else filter (\a -> (read value :: Int) == areaId a) areas
+                                       else filter (\a -> value == areaId a) areas
                        _        -> areas -- скiпаємо будь-які незнані ключі
 
     -- продовжуємо пошук у вже відфильтрованих результатах
     in select params filtered
-        where valueList = read ("[" ++ value ++ "]") :: [Int]
+        where valueList = read ("[" ++ value ++ "]") :: [String]
               (key, value) = (unpack key', unpack value')
