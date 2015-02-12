@@ -15,7 +15,7 @@ import           Web.Scotty     (Param)
 data Document = Document
     { documentId          :: Int     -- унікальний ідентифікатор документу
     , documentYear        :: Int     -- період
-    , documentArea        :: Int     -- регіон
+    , documentArea        :: String  -- регіон
     , documentName        :: String  -- назва документу
     , documentDescription :: String  -- додаткові дані
     , documentLink        :: String  -- посилання на джерело документу
@@ -38,7 +38,7 @@ instance ToJSON Document where
 fromCSV :: CSV.Record     -- ^ результат парсингу CVS
         -> Maybe Document -- ^ можливий документ
 fromCSV (id':y:a:n:d:l:f:[])
-    | all isDigit id' = Just (Document (i id') (i y) (i a) n d l)
+    | all isDigit id' = Just (Document (i id') (i y) a n d l)
     | otherwise       = Nothing
     where i x = read x :: Int
 fromCSV _ = Nothing
@@ -54,7 +54,7 @@ select [] docs                     = docs
 select _  []                       = []
 select ((key',value'):params) docs =
     let filtered = case key of
-                       "area_id" -> sameInt docs documentArea
+                       "area_id" -> filter (\doc -> documentArea doc == value) docs
                        "year"    -> sameInt docs documentYear
                        "id"      -> sameInt docs documentId
                        "search"  -> filter (\doc -> map toLower value `isInfixOf` map toLower (documentName doc)) docs

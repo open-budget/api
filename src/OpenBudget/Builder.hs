@@ -12,7 +12,6 @@ import           OpenBudget.Types.Document hiding (fromCSV)
 import qualified OpenBudget.Types.Document as Document (fromCSV)
 import           OpenBudget.Types.Expense  hiding (fromCSV)
 import qualified OpenBudget.Types.Expense  as Expense (fromCSV)
-import qualified Paths_api                 as Paths
 import           System.Environment        (lookupEnv)
 import           Text.CSV                  (Record, parseCSV)
 
@@ -29,7 +28,7 @@ newDatabase = do
 getSmthn :: FilePath -> (Record -> Maybe a) -> IO [a]
 getSmthn f preprocess = do
     dataPath <- fromMaybe standardPath <$> lookupEnv standardEnvKey
-    contents <- Paths.getDataFileName (dataPath ++ "/" ++ f) >>= readFile
+    contents <- readFile (dataPath ++ "/" ++ f)
     case parseCSV f contents of
         Right _csv -> return $ map fromJust $ filter isJust $ map preprocess _csv
         Left _ -> return []

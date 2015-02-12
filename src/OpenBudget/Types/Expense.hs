@@ -18,7 +18,7 @@ data Expense = Expense
 
     { expenseId            :: String       -- унікальний ідентифікатор статті витрат
 
-    , expenseAreaId        :: Int          -- внутрішній код регіону (0 - Україна, 1-24 - областi)
+    , expenseAreaId        :: String       -- внутрішній код регіону, згідно зі КОАТУУ
     , expenseDocumentId    :: Int          -- посилання на id документу
     , expenseYear          :: Int          -- звітний період
 
@@ -79,7 +79,7 @@ fromCSV (c:cn:gft:gfw:gfu:sft:ct:cw:cu:dt:db:ce:t:[])
     | all isDigit c && length c > 5 =
         Just Expense
             { expenseId            = ""
-            , expenseAreaId        = 0
+            , expenseAreaId        = "0000000000"
             , expenseDocumentId    = 0
             , expenseYear          = 0
             , code                 = c
@@ -119,8 +119,8 @@ linkToDocument doc = updateItemId . updateYear (documentYear doc) . updateDocume
 
           -- оновлення унікального ідентифікатора статті витрат, побудованого з
           updateItemId si = si { expenseId = code' }
-              where [y', a, c] = fmap show [ expenseYear si, expenseAreaId si, read (code si) :: Int]
-                    code' = y' ++ "-" ++ a ++ "-" ++ c
+              where [y', c] = fmap show [ expenseYear si, read (code si) :: Int]
+                    code' = y' ++ "-" ++ expenseAreaId si ++ "-" ++ c
 
 
 -- | Створення виборки серед видатків по заданим параметрам. Параметри беруться
@@ -133,9 +133,9 @@ select [] expenses                     = expenses
 select _  []                           = []
 select ((key',value'):params) expenses =
     let filtered = case key of
-                       "area_id"     -> sameInt expenses expenseAreaId
                        "year"        -> sameInt expenses expenseYear
                        "document_id" -> sameInt expenses expenseDocumentId
+                       "area_id"     -> filter (\e -> value == expenseAreaId e) expenses
                        "id"          -> filter (\e -> value == expenseId e) expenses
                        "search"      -> filter (\e -> map toLower value `isInfixOf` map toLower (codeName e)) expenses
                        "code"        -> if "," `isInfixOf` value
