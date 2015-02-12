@@ -11,9 +11,7 @@ category:             Web
 build-type:           Simple
 cabal-version:        >=1.10
 data-files:
-      data/areas/*.csv
-    , data/expenses/*.csv
-    , resourses/index.html
+    resourses/index.html
 
 library
     hs-source-dirs:   src
